@@ -1,5 +1,7 @@
 # 工作流开发说明
-    该工作流应作为一个独立的springboot项目运行，使用nacos作为注册中心，为其他的springboot服务提供接口调用。
+    该工作流应作为一个独立的springboot项目运行。
+	使用nacos作为注册中心，为其他的springboot服务提供接口调用。
+	添加feign相关依赖，可使用feign实现接口化调用
     打包为jar的形式进行部署。
 
 ### 流程开发注意事项
