@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://192.168.1.204:3306/insurance_activiti?autoReconnect=true&characterEncoding=UTF-8&useSSL=false
+      username: root
+      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      filter:
+        stat:
+          enabled: true
+          db-type: mysql
+          log-slow-sql: true
+          slow-sql-millis: 2000
+        wall:
+          config:
+            multi-statement-allow: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      useGlobalDataSourceStat: true
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.1.204:8848
+
+logging:
+  level:
+    com:
+      haivera:
+        insconadmin: debug
+        insconuser: debug

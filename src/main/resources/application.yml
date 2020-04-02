@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: process-center
+  profiles:
+    active: @spring.activeProfile@ # 注意顺序，顺序不对会导致覆盖问题
+
+    # activiti 相关配置
+  activiti:
+    check-process-definitions: false # 校验流程文件
+    process-definition-location-prefix: classpath:/processes/ # bpmn文件位置
+    database-schema-update: true # 检查数据库中表是否存在，不存在创建数据库表
+#    database-schema: ACTIVITI # 指定数据源
+  main:
+    allow-bean-definition-overriding: true
+
+server:
+  port: 8092
