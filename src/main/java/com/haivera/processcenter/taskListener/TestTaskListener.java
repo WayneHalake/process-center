@@ -2,6 +2,9 @@ package com.haivera.processcenter.taskListener;
 
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
+import org.activiti.engine.impl.el.FixedValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,8 +16,23 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TestTaskListener implements TaskListener {
+
+    private final static Logger logger = LoggerFactory.getLogger(TestTaskListener.class);
+
+    //添加任务监听器时添加的FieldName
+    private FixedValue testField;
+
     @Override
     public void notify(DelegateTask delegateTask) {
+        Object value = testField.getValue(delegateTask); //获取FieldName对应的value
+        logger.info("value:{}", value.toString());
+    }
 
+    public FixedValue getTestField() {
+        return testField;
+    }
+
+    public void setTestField(FixedValue testField) {
+        this.testField = testField;
     }
 }

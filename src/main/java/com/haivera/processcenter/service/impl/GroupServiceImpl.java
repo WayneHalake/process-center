@@ -4,12 +4,25 @@ import com.haivera.processcenter.common.IdCombine;
 import com.haivera.processcenter.service.IGroupService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.impl.persistence.entity.GroupEntityImpl;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class GroupServiceImpl implements IGroupService {
+
+    /**
+     * 目的参考 UserServiceImpl
+     * @param groupEntity
+     * @param group
+     */
+    private void generalGroup(Group groupEntity, Group group){
+        groupEntity.setName(group.getName());
+        groupEntity.setType(group.getType());
+    }
 
     @Autowired
     private IdentityService identityService;
@@ -38,5 +51,24 @@ public class GroupServiceImpl implements IGroupService {
             sb.append(" where ID_ like ").append(systemId).append("_%");
         }
         return identityService.createNativeGroupQuery().sql(sb.toString()).list();
+    }
+
+    @Override
+    public void addGroupList(List<GroupEntityImpl> groupList, String systemId) {
+        for(Group group: groupList){
+            this.addGroup(group, systemId);
+        }
+    }
+
+    @Override
+    public void addGroup(Group group, String systemId) {
+        Group groupEntity = identityService.newGroup(IdCombine.combineId(systemId, group.getId()));
+        generalGroup(groupEntity, group);
+        identityService.saveGroup(groupEntity);
+    }
+
+    @Override
+    public void delGroup(Group group, String systemId) {
+        identityService.deleteGroup(IdCombine.combineId(systemId, group.getId()));
     }
 }

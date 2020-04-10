@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 事件监听器
+ * 1.可在流程图bpmn文件中的Event listeners中添加相应的事件监听器
+ * 2.也可在SpringProcessEngineConfiguration中添加全局的事件监听器
  * for event listener test
  */
 @Component

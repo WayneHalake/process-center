@@ -2,8 +2,19 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
   <process id="productApprove" name="productApprove" isExecutable="true">
     <documentation>产品审批流程</documentation>
+    <extensionElements>
+      <activiti:eventListener events="ACTIVITY_STARTED" class="com.haivera.processcenter.eventListener.TestEventListener"></activiti:eventListener>
+    </extensionElements>
     <startEvent id="approveStart" name="开始"></startEvent>
-    <userTask id="subApprove" name="提交"></userTask>
+    <userTask id="subApprove" name="提交">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.haivera.processcenter.taskListener.TestTaskListener">
+          <activiti:field name="testField">
+            <activiti:string><![CDATA[1111111]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <userTask id="approve" name="审批"></userTask>
     <sequenceFlow id="sid-EAE32223-0929-4C82-A48E-34353887A82F" sourceRef="approveStart" targetRef="subApprove"></sequenceFlow>
     <endEvent id="endApprove" name="结束"></endEvent>

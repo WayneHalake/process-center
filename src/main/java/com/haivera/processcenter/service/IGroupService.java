@@ -1,6 +1,8 @@
 package com.haivera.processcenter.service;
 
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.impl.persistence.entity.GroupEntity;
+import org.activiti.engine.impl.persistence.entity.GroupEntityImpl;
 
 import java.util.List;
 
@@ -24,4 +26,23 @@ public interface IGroupService {
      * @return
      */
     List<Group> getGroupList(String systemId);
+
+    /**
+     * 添加用户组列表信息
+     * @param groupList
+     */
+    void addGroupList(List<GroupEntityImpl> groupList, String systemId);
+
+    /**
+     * 添加用户组信息
+     * @param group
+     */
+    void addGroup(Group group, String systemId);
+
+    /**
+     * 删除
+     * @param group
+     */
+    void delGroup(Group group, String systemId);
+
 }
