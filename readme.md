@@ -37,8 +37,8 @@
                 server-addr: 192.168.1.204:8848
   
 ### 提供接口
-   > processKey 流程key，在创建流程图时，可指定流程的processKey
-   > processId 流程实例id，流程实例化时，将提供对应的processId
+   > * processKey 流程key，在创建流程图时，可指定流程的processKey
+   > * processId 流程实例id，流程实例化时，将提供对应的processId
    
    接口详情才看swagger地址
    > swagger地址 http://127.0.0.1:8092/swagger-ui.html
@@ -62,8 +62,8 @@
 
 ##### CommonIdentityCtr
     用户、用户组（角色）、用户与用户组（角色）绑定关系
-   > systemId 对应系统id，目的：作为区分不同系统的标识
-   > 参数中的对象，请使用JSON数据 
+   > * systemId 对应系统id，目的：作为区分不同系统的标识
+   > * 参数中的对象，请使用JSON数据 
    
 | 请求类型 | 接口 | 参数 | 返回值| 描述 |
 | :--- | :---- | :---- | :----: | :----: |
