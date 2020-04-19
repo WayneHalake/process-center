@@ -40,7 +40,7 @@
    > * processKey 流程key，在创建流程图时，可指定流程的processKey
    > * processId 流程实例id，流程实例化时，将提供对应的processId
    
-   接口详情才看swagger地址
+   接口详情参考swagger地址
    > swagger地址 http://127.0.0.1:8092/swagger-ui.html
 ##### CommonProcessCtr
     流程、任务等处理接口
