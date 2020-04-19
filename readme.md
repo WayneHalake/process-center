@@ -37,6 +37,41 @@
                 server-addr: 192.168.1.204:8848
   
 ### 提供接口
- | 接口 | 参数 | 返回值| 描述 |
- | :---- | :---- | :----: | :----: |
- | post /processCtr/createPro | String processKey | 流程实例id | 创建流程 提供流程的processKey |
+   > processKey 流程key，在创建流程图时，可指定流程的processKey
+   > processId 流程实例id，流程实例化时，将提供对应的processId
+   
+   接口详情才看swagger地址
+   > swagger地址 http://127.0.0.1:8092/swagger-ui.html
+##### CommonProcessCtr
+    流程、任务等处理接口
+ | 请求类型 | 接口 | 参数 | 返回值| 描述 |
+ | :--- | :---- | :---- | :----: | :----: |
+ | post |/processCtr/createPro | String processKey | 流程实例id String | 创建流程 |
+ | get |/processCtr/listProcess | String processKey | 流程实例列表 List<ExecutionEntityImpl> | 查找流程实例列表 |
+ | get |/processCtr/listAllProcessInstance |  | 流程实例列表 List<ExecutionEntityImpl> | 获取所有正在运行的流程实例 |
+ | post |/processCtr/suspendProcess | String processId |  | 挂起流程 |
+ | post |/processCtr/activateProcess | String processId |  | 启动流程 |
+ | get |/processCtr/getProcessByProcessId | String processId | 流程实例 ExecutionEntityImpl  | 通过processId获取流程实例 |
+ | get |/processCtr/listHistory | String processId | 流程历史记录 List<HistoricActivityInstance> | 获取流程的历史记录 | 
+ | get |/processCtr/currentTask | String processId | 任务 TaskEntityImlp | 流程实例所在节点--返回单个节点 |
+ | get |/processCtr/listRunTask | String processId | 任务列表 List<TaskEntityImlp> | 流程实例所在节点--返回个多节点 |
+ | get |/processCtr/listTask | String processKey, String systemId, String userId | 任务列表 List<TaskEntityImlp> | 获取当前用户在processkey流程中任务 |
+ | get |/processCtr/getProcessByTaskId | String taskId | 流程实例 ExecutionEntityImpl | 通过任务id获取流程实例 |
+ | post |/processCtr/complete | String taskId, HashMap map, String systemId, String userId | 下一个任务Id String | 完成一个任务 |
+ | get |/processCtr/getImage | HttpServletResponse response, String processId, boolean lightFlag |  | 获取流程图 |
+
+##### CommonIdentityCtr
+    用户、用户组（角色）、用户与用户组（角色）绑定关系
+   > systemId 对应系统id，目的：作为区分不同系统的标识
+   > 参数中的对象，请使用JSON数据 
+   
+| 请求类型 | 接口 | 参数 | 返回值| 描述 |
+| :--- | :---- | :---- | :----: | :----: |
+| post |/identityCtr/syncUser | UserEntityImpl user,String systemId |  | 同步用户信息 |
+| post |/identityCtr/syncUserList | JSONObject users,String systemId |  | 同步用户信息（列表） |
+| post |/identityCtr/syncGroup | GroupEntityImpl group,String systemId |  | 同步用户组（角色）信息 |
+| post |/identityCtr/syncGroupList | JSONObject groups,String systemId |  | 同步用户组（角色）信息(列表) |
+| post |/identityCtr/syncUserAndGroup | JSONObject object,String systemId |  | 同步用户、用户组（角色）信息，默认当前用户与用户组（角色）关联 |
+| post |/identityCtr/synUserAndGroupMembership | JSONObject object,String systemId |  | 同步用户与用户组（角色）关系 |
+| post |/identityCtr/synUsersAndGroups | JSONObject object,String systemId |  | 同步用户、用户组（角色）关系和用户与用户组（角色）关系 |
+

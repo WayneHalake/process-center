@@ -58,8 +58,7 @@ public class CommonProcessCtr {
      */
     @ApiOperation(value = "流程实例列表", notes = "通过processKey查找流程实例列表")
     @ApiImplicitParam(name = "processKey", value = "流程图processKey", paramType="query", required = true, dataType = "string")
-    @PostMapping("/listProcess")
-    @JsonIgnore
+    @GetMapping("/listProcess")
     public ResponseInfo listProcess(String processKey){
         ResponseInfo responseInfo = new ResponseInfo();
         List<Object> datas = new ArrayList<>();
@@ -183,7 +182,7 @@ public class CommonProcessCtr {
      */
     @ApiOperation(value = "挂起流程", notes = "通过流程实例processId挂起流程")
     @ApiImplicitParam(name = "processId", value = "流程实例processId", paramType="query", required = true, dataType = "string")
-    @GetMapping("/suspendProcess")
+    @PostMapping("/suspendProcess")
     public void suspendProcess(String processId){
         try{
             commonProcessSer.suspendProcess(processId);
@@ -199,7 +198,7 @@ public class CommonProcessCtr {
      */
     @ApiOperation(value = "启动挂起的流程", notes = "通过流程实例processId启动挂起的流程")
     @ApiImplicitParam(name = "processId", value = "流程实例processId", paramType="query", required = true, dataType = "string")
-    @GetMapping("/activateProcess")
+    @PostMapping("/activateProcess")
     public void activateProcess(String processId){
         try{
             commonProcessSer.activateProcess(processId);
@@ -265,7 +264,7 @@ public class CommonProcessCtr {
             @ApiImplicitParam(name = "systemId", value = "系统标识id", paramType="query", required = true, dataType = "string"),
             @ApiImplicitParam(name = "userId", value = "用户id", paramType="query", required = true, dataType = "string")
     })
-    @GetMapping("/complete")
+    @PostMapping("/complete")
     public String completeTask(String taskId, HashMap map, String systemId, String userId){
         String nextTaskId = "";
         try{
