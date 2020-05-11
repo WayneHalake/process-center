@@ -1,6 +1,7 @@
 package com.haivera.processcenter.common;
 
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class IdCombine {
 

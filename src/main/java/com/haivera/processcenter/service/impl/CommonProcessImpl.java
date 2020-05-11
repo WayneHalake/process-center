@@ -13,7 +13,6 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.activiti.image.ProcessDiagramGenerator;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class CommonProcessImpl implements ICommonProcessSer {
     private HistoryService historyService;
 
     @Autowired
-    private TaskService taskService;
+    private CommonTaskImpl commonTaskImpl;
 
     @Autowired
     private RepositoryService repositoryService;
@@ -56,43 +55,6 @@ public class CommonProcessImpl implements ICommonProcessSer {
         String processInsId = processInstance.getId();
         logger.info("创建流程成功，流程key["+processKey+"]，流程实例化Id["+processInsId+"]");
         return processInsId;
-    }
-
-    @Override
-    public String completeTask(String taskId, HashMap<String, Object> map, String systemId, String userId) {
-        Task task = this.getTaskByTaskId(taskId);
-        if(task != null){
-            //设置任务处理人
-            String assigner = IdCombine.combineId(systemId, userId);
-            this.setAssigner(taskId, assigner);
-            taskService.complete(taskId, map);
-        }else{
-            return "任务不存在！";
-        }
-        return this.currentTask(task.getProcessInstanceId()).getId();
-    }
-
-    @Override
-    public Task currentTask(String processId) {
-        return taskService.createTaskQuery().processInstanceId(processId).singleResult();
-    }
-
-    @Override
-    public List<Task> listTask(String processKey, String systemId, String userId) {
-        List<Task> result = new ArrayList<>();
-        TaskQuery taskQuery = taskService.createTaskQuery().processDefinitionKey(processKey);
-
-        String assigner = IdCombine.combineId(systemId, userId);
-        if(StringUtils.isNotEmpty(assigner)){
-            taskQuery.taskAssignee(assigner);
-        }
-        result = taskQuery.orderByTaskCreateTime().desc().list();
-        return result;
-    }
-
-    @Override
-    public List<Task> listRunTask(String processId) {
-        return taskService.createTaskQuery().processInstanceId(processId).list();
     }
 
     @Override
@@ -127,7 +89,7 @@ public class CommonProcessImpl implements ICommonProcessSer {
         //当前正在运行的任务高亮
         if(lightFlag) {
             if(!this.isFinishedProcess(processId)){
-                List<Task> runTaskList = this.listRunTask(processId);
+                List<Task> runTaskList = commonTaskImpl.listRunTask(processId);
                 for(Task task: runTaskList){
                     highLightedActivitis.add(task.getTaskDefinitionKey());
                 }
@@ -181,25 +143,11 @@ public class CommonProcessImpl implements ICommonProcessSer {
 
     @Override
     public ProcessInstance getProcessByTaskId(String taskId) {
-        Task task = this.getTaskByTaskId(taskId);
+        Task task = commonTaskImpl.getTaskByTaskId(taskId);
         if(task == null){
             return null;
         }
         return getProcessByProcessId(task.getProcessInstanceId());
     }
 
-    @Override
-    public Task getTaskByTaskId(String taskId) {
-        return taskService.createTaskQuery().taskId(taskId).singleResult();
-    }
-
-    @Override
-    public void claimTask(String taskId, String assigner) {
-        taskService.claim(taskId, assigner);
-    }
-
-    @Override
-    public void setAssigner(String taskId, String assigner) {
-        taskService.setAssignee(taskId, assigner);
-    }
 }

@@ -1,9 +1,9 @@
 spring:
   datasource:
     druid:
-      url: jdbc:mysql://192.168.1.68:3306/insurance?autoReconnect=true&characterEncoding=UTF-8&useSSL=false
-      username: tiger
-      password: 123456
+      url: jdbc:mysql://39.100.102.105:3306/insurance?autoReconnect=true&characterEncoding=UTF-8&useSSL=false
+      username: root
+      password: A@2019!ad
       driver-class-name: com.mysql.cj.jdbc.Driver
       type: com.alibaba.druid.pool.DruidDataSource
       #   数据源其他配置
@@ -32,13 +32,12 @@ spring:
 
       maxPoolPreparedStatementPerConnectionSize: 20
       useGlobalDataSourceStat: true
-      #connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
 
   # nacos 注册中心
 #  cloud:
 #    nacos:
 #      discovery:
-#        server-addr: 192.168.1.68:8848
+#        server-addr: 39.100.102.105:8848
 logging:
   level:
     com:

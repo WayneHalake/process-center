@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.haivera.processcenter.common.util.ResponseInfo;
 import com.haivera.processcenter.service.ICommonProcessSer;
+import com.haivera.processcenter.service.ICommonTaskSer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -32,6 +33,9 @@ public class CommonProcessCtr {
 
     @Autowired
     private ICommonProcessSer commonProcessSer;
+
+    @Autowired
+    private ICommonTaskSer commonTaskSer;
 
     /**
      * 创建流程实例
@@ -74,83 +78,6 @@ public class CommonProcessCtr {
             responseInfo.doFailed("流程实例列表查询失败！", e);
         }
         return responseInfo;
-    }
-
-    /**
-     * 获取流程当前任务节点
-     * @param processId
-     * @return
-     */
-    @ApiOperation(value = "流程实例所在节点--返回单个节点", notes = "通过processId查找流程实例所在节点")
-    @ApiImplicitParam(name = "processId", value = "流程实例processId", paramType="query", required = true, dataType = "string")
-    @GetMapping("/currentTask")
-    public ResponseInfo currentTask(String processId){
-        ResponseInfo resp = new ResponseInfo();
-        try {
-            Task task = commonProcessSer.currentTask(processId);
-            TaskEntityImpl taskEntity = (TaskEntityImpl) task;
-            resp.doSuccess("查询当前任务节点成功！", taskEntity.getPersistentState());
-        }catch (Exception e){
-            e.printStackTrace();
-            resp.doFailed("查询当前任务节点失败！", e);
-        }
-        return resp;
-    }
-
-    /**
-     * 获取流程当前任务列表
-     * @param processId
-     * @return
-     */
-    @ApiOperation(value = "流程实例所在节点--返回多个节点", notes = "通过processId查找流程实例所在节点")
-    @ApiImplicitParam(name = "processId", value = "流程实例processId", paramType="query", required = true, dataType = "string")
-    @GetMapping("/listRunTask")
-    public ResponseInfo listRunTask(String processId){
-        ResponseInfo resp = new ResponseInfo();
-        try{
-            List<Object> datas = new ArrayList<>();
-            List<Task> taskList = commonProcessSer.listRunTask(processId);
-            for(Task task: taskList){
-                TaskEntityImpl taskEntity = (TaskEntityImpl)task;
-                datas.add(taskEntity.getPersistentState());
-            }
-            resp.doSuccess("获取流程当前任务列表成功！", datas);
-        }catch (Exception e){
-            e.printStackTrace();
-            resp.doFailed("获取流程当前任务列表失败！", e);
-        }
-        return resp;
-    }
-
-    /**
-     * 获取当前用户在processkey流程中任务
-     * @param processKey
-     * @param systemId
-     * @param userId
-     * @return
-     */
-    @ApiOperation(value = "获取当前用户在processkey流程中任务", notes = "获取当前用户在processkey流程中任务")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "processKey", value = "流程processKey", paramType="query", required = true, dataType = "string"),
-            @ApiImplicitParam(name = "systemId", value = "系统标识id", paramType="query", required = true, dataType = "string"),
-            @ApiImplicitParam(name = "userId", value = "用户id", paramType="query", required = true, dataType = "string")
-    })
-    @GetMapping("/listTask")
-    public ResponseInfo listTask(String processKey, String systemId, String userId){
-        ResponseInfo resp = new ResponseInfo();
-        try{
-            List<Task> taskList = commonProcessSer.listTask(processKey, systemId, userId);
-            List<Object> datas = new ArrayList<>();
-            for(Task task: taskList){
-                TaskEntityImpl taskEntity = (TaskEntityImpl)task;
-                datas.add(taskEntity.getPersistentState());
-            }
-            resp.doSuccess("获取当前用户的任务成功！",datas);
-        }catch (Exception e){
-            e.printStackTrace();
-            resp.doFailed("获取当前用户的任务失败!", e);
-        }
-        return resp;
     }
 
     /**
@@ -247,32 +174,6 @@ public class CommonProcessCtr {
             resp.doFailed("获取流程实例失败！", e);
         }
         return resp;
-    }
-
-    /**
-     * 完成一个任务
-     * @param taskId
-     * @param map 任务所需参数
-     * @param userId 用户id
-     * @param systemId 系统id
-     * @return
-     */
-    @ApiOperation(value = "完成一个任务", notes = "完成一个任务")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "taskId", value = "任务taskId", paramType="query", required = true, dataType = "string"),
-            @ApiImplicitParam(name = "map", value = "任务所需参数", paramType="query", dataType = "HashMap"),
-            @ApiImplicitParam(name = "systemId", value = "系统标识id", paramType="query", required = true, dataType = "string"),
-            @ApiImplicitParam(name = "userId", value = "用户id", paramType="query", required = true, dataType = "string")
-    })
-    @PostMapping("/complete")
-    public String completeTask(String taskId, HashMap map, String systemId, String userId){
-        String nextTaskId = "";
-        try{
-            nextTaskId = commonProcessSer.completeTask(taskId, map, systemId, userId);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return nextTaskId;
     }
 
     /**
