@@ -31,11 +31,11 @@ public class SwaggerConfiguration {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 //页面标题
-                .title("process-center RESTful API")
+                .title("workflow RESTful API")
                 //版本号
                 .version("1.0")
                 //描述
-                .description("API 描述")
+                .description("工作流api接口")
                 .build();
     }
 }

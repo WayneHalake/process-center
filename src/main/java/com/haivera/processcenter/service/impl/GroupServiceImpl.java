@@ -38,6 +38,16 @@ public class GroupServiceImpl implements IGroupService {
         return identityService.createGroupQuery().groupId(IdCombine.combineId(systemId, groupId)).singleResult();
     }
 
+    @Override
+    public List<Group> getGroupByUserId(String systemId, String userId) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("select * from ACT_ID_GROUP group left join ACT_ID_MEMBERSHIP membership on (group.ID_ == membership.GROUP_ID_ )");
+        if(StringUtils.isNotEmpty(systemId)){
+            sb.append(" where membership.USER_ID_ = '").append(IdCombine.combineId(systemId, userId)).append("'");
+        }
+        return identityService.createNativeGroupQuery().sql(sb.toString()).list();
+    }
+
     /**
      * 获取用户组列表
      * @param systemId 系统id

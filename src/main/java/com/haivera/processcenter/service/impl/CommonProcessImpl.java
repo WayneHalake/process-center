@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CommonProcessImpl implements ICommonProcessSer {
@@ -54,6 +51,18 @@ public class CommonProcessImpl implements ICommonProcessSer {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey);
         String processInsId = processInstance.getId();
         logger.info("创建流程成功，流程key["+processKey+"]，流程实例化Id["+processInsId+"]");
+        return processInsId;
+    }
+
+    @Override
+    public String startProcessInstanceByKey(String processKey, String busCode, String busType) {
+        logger.info("开始创建流程，业务编码[{}]，业务类型[{}]", busCode, busType);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("busCode", busCode);
+        variables.put("busType", busType);
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, variables);
+        String processInsId = processInstance.getId();
+        logger.info("创建流程成功，流程key[{}]，流程实例化Id[{}]", processKey, processInsId);
         return processInsId;
     }
 

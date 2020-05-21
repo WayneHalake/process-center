@@ -21,6 +21,14 @@ public interface IGroupService {
     Group getGroupById(String systemId, String groupId);
 
     /**
+     * 通过用户id获取用户组信息
+     * @param systemId
+     * @param userId
+     * @return
+     */
+    List<Group> getGroupByUserId(String systemId, String userId);
+
+    /**
      * 获取用户组信息列表
      * @param systemId 系统id
      * @return

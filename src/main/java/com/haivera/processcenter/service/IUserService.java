@@ -73,4 +73,12 @@ public interface IUserService {
      */
     void syncUserAndGroup(List<UserEntityImpl> users, List<GroupEntityImpl> groups, HashMap<String, String> userAndGroup, String systemId);
 
+    /**
+     * 通过用户组获取用户列表
+     * @param groupId
+     * @param systemId
+     * @return
+     */
+    List<User> getUserListByGroup(String groupId, String systemId);
+
 }

@@ -1,12 +1,9 @@
 package com.haivera.processcenter.service;
 
 import org.activiti.engine.history.HistoricActivityInstance;
-import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.task.Task;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -21,7 +18,14 @@ public interface ICommonProcessSer {
      */
     String StartAndCreateProcess(String processKey) throws Exception;
 
-
+    /**
+     * 创建并开始流程
+     * @param processDefinitionKey 流程key
+     * @param busCode 业务编码
+     * @param busType  业务类型
+     * @return
+     */
+    String startProcessInstanceByKey(String processDefinitionKey, String busCode, String busType);
     /**
      * 按流程key查找运行中的流程实例
      * @param processKey

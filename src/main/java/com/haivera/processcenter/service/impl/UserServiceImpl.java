@@ -109,4 +109,14 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    @Override
+    public List<User> getUserListByGroup(String groupId, String systemId) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("select user.* from ACT_ID_USER user left join ACT_ID_MEMBERSHIP membership on (user.ID_ == membership.USER_ID_ )");
+        if(StringUtils.isNotEmpty(systemId)){
+            sb.append(" where membership.GROUP_ID_ = '").append(IdCombine.combineId(systemId, groupId)).append("'");
+        }
+        return identityService.createNativeUserQuery().sql(sb.toString()).list();
+    }
+
 }

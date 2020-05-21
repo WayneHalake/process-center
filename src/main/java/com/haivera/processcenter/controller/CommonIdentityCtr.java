@@ -16,6 +16,7 @@ import org.activiti.engine.impl.persistence.entity.UserEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +33,115 @@ public class CommonIdentityCtr {
 
     @Autowired
     private IUserService userService;
+
+    /**
+     * 通过systemId获取用户列表
+     * @param systemId
+     * @return
+     */
+    @ApiOperation(value = "通过systemId获取用户列表", notes = "通过systemId获取用户列表")
+    @ApiImplicitParam(name = "systemId", value = "systemId", paramType = "query", required = true, dataType = "string")
+    @GetMapping("/getUserListBySystemId")
+    public ResponseInfo getUserListBySystemId(String systemId){
+        ResponseInfo resp = new ResponseInfo();
+        try{
+            List<User> userList = userService.getUserList(systemId);
+            List<Object> datas = new ArrayList<>();
+            for(User user: userList){
+                UserEntityImpl userEntity = (UserEntityImpl) user;
+                datas.add(userEntity.getPersistentState());
+            }
+            resp.doSuccess("获取用户列表成功", datas);
+        }catch (Exception e){
+            resp.doFailed("获取用户列表失败");
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
+    /**
+     * 通过systemId获取用户组列表
+     * @param systemId
+     * @return
+     */
+    @ApiOperation(value = "通过systemId获取用户组列表", notes = "通过systemId获取用户组列表")
+    @ApiImplicitParam(name = "systemId", value = "systemId", paramType = "query", required = true, dataType = "string")
+    @GetMapping("/getGroupListBySystemId")
+    public ResponseInfo getGroupListBySystemId(String systemId){
+        ResponseInfo resp = new ResponseInfo();
+        try{
+            List<Group> groupList = groupService.getGroupList(systemId);
+            List<Object> datas = new ArrayList<>();
+            for(Group group: groupList){
+                GroupEntityImpl groupEntity = (GroupEntityImpl) group;
+                datas.add(groupEntity);
+            }
+            resp.doSuccess("获取用户组列表成功", datas);
+        }catch (Exception e){
+            resp.doFailed("获取用户组列表失败");
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
+    /**
+     * 通过用户组获取用户列表
+     * @param systemId
+     * @param groupId
+     * @return
+     */
+    @ApiOperation(value = "通过用户组获取用户列表", notes = "通过用户组获取用户列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "groupId", value = "用户组id", paramType = "query", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "systemId", value = "系统id", paramType = "query", required = true, dataType = "string")
+    })
+    @GetMapping("/getUserListByGroupId")
+    public ResponseInfo getUserListByGroupId(String groupId, String systemId){
+        ResponseInfo resp = new ResponseInfo();
+        try{
+            List<User> userList = userService.getUserListByGroup(groupId, systemId);
+            List<Object> datas = new ArrayList<>();
+            for(User user: userList){
+                UserEntityImpl userEntity = (UserEntityImpl) user;
+                datas.add(userEntity.getPersistentState());
+            }
+            resp.doSuccess("获取用户列表成功", datas);
+        }catch (Exception e){
+            resp.doFailed("获取用户列表失败");
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
+    /**
+     * 通过用户获取 用户所在的用户组信息
+     * @param systemId
+     * @param userId
+     * @return
+     */
+    @ApiOperation(value = "通过用户获取 用户所在的用户组信息", notes = "通过用户获取 用户所在的用户组信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "systemId", value = "系统id", paramType = "query", required = true, dataType = "string")
+    })
+    @GetMapping("/getGroupListByUserId")
+    public ResponseInfo getGroupListByUserId(String userId, String systemId){
+        ResponseInfo resp = new ResponseInfo();
+        try{
+            List<Group> groupList = groupService.getGroupByUserId(systemId, userId);
+            List<Object> datas = new ArrayList<>();
+            for(Group group: groupList){
+                GroupEntityImpl groupEntity = (GroupEntityImpl) group;
+                datas.add(groupEntity);
+            }
+            resp.doSuccess("获取用户组列表成功", datas);
+        }catch (Exception e){
+            resp.doFailed("获取用户列表失败");
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
 
     @ApiOperation(value = "同步用户信息", notes = "同步用户信息")
     @ApiImplicitParams({

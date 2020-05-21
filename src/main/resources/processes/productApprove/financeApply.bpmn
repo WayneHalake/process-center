@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="financeApply" name="融资申请" isExecutable="true">
+    <documentation>融资申请</documentation>
+    <startEvent id="startEvent1" name="融资申请开始" activiti:formKey="financeApplyStartForm">
+      <extensionElements>
+        <activiti:formProperty id="amt" name="申请额度" type="string"></activiti:formProperty>
+        <activiti:formProperty id="term" name="申请期限" type="string"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <userTask id="sid-CBA258A8-EF00-44E0-836D-814E5A7A1517" name="项目立项" activiti:candidateUsers="wanger,wangsan,ppt_1111,wangyi,wangsi" activiti:formKey="projectBuildForm">
+      <extensionElements>
+        <activiti:formProperty id="states" name="处理状态" type="string" variable="通过"></activiti:formProperty>
+        <activiti:formProperty id="nextTaskActor" name="下一级审批人" type="string"></activiti:formProperty>
+        <modeler:user-info-email-wanger xmlns:modeler="http://activiti.com/modeler"><![CDATA[wanger@163.com]]></modeler:user-info-email-wanger>
+        <modeler:user-info-firstname-wanger xmlns:modeler="http://activiti.com/modeler"><![CDATA[wang]]></modeler:user-info-firstname-wanger>
+        <modeler:user-info-lastname-wanger xmlns:modeler="http://activiti.com/modeler"><![CDATA[er]]></modeler:user-info-lastname-wanger>
+        <modeler:user-info-email-wangsan xmlns:modeler="http://activiti.com/modeler"><![CDATA[wangsan@163.com]]></modeler:user-info-email-wangsan>
+        <modeler:user-info-firstname-wangsan xmlns:modeler="http://activiti.com/modeler"><![CDATA[wang]]></modeler:user-info-firstname-wangsan>
+        <modeler:user-info-lastname-wangsan xmlns:modeler="http://activiti.com/modeler"><![CDATA[san]]></modeler:user-info-lastname-wangsan>
+        <modeler:user-info-firstname-ppt_1111 xmlns:modeler="http://activiti.com/modeler"><![CDATA[zhang]]></modeler:user-info-firstname-ppt_1111>
+        <modeler:user-info-lastname-ppt_1111 xmlns:modeler="http://activiti.com/modeler"><![CDATA[san]]></modeler:user-info-lastname-ppt_1111>
+        <modeler:user-info-email-wangyi xmlns:modeler="http://activiti.com/modeler"><![CDATA[wangyi@163.com]]></modeler:user-info-email-wangyi>
+        <modeler:user-info-firstname-wangyi xmlns:modeler="http://activiti.com/modeler"><![CDATA[wang]]></modeler:user-info-firstname-wangyi>
+        <modeler:user-info-lastname-wangyi xmlns:modeler="http://activiti.com/modeler"><![CDATA[yi]]></modeler:user-info-lastname-wangyi>
+        <modeler:user-info-email-wangsi xmlns:modeler="http://activiti.com/modeler"><![CDATA[wangsi@163.com]]></modeler:user-info-email-wangsi>
+        <modeler:user-info-firstname-wangsi xmlns:modeler="http://activiti.com/modeler"><![CDATA[wang]]></modeler:user-info-firstname-wangsi>
+        <modeler:user-info-lastname-wangsi xmlns:modeler="http://activiti.com/modeler"><![CDATA[si]]></modeler:user-info-lastname-wangsi>
+        <modeler:activiti-idm-candidate-user xmlns:modeler="http://activiti.com/modeler"><![CDATA[true]]></modeler:activiti-idm-candidate-user>
+        <modeler:initiator-can-complete xmlns:modeler="http://activiti.com/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-4B24FEF7-030E-46D7-9D27-303D2CBB3EA9" sourceRef="startEvent1" targetRef="sid-CBA258A8-EF00-44E0-836D-814E5A7A1517"></sequenceFlow>
+    <userTask id="sid-9AFD8215-88AF-4C08-B851-23CAB3CF6BC0" name="项目评审">
+      <extensionElements>
+        <activiti:formProperty id="state" name="审批状态" type="string" variable="通过"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-BF2FF8BF-856B-4F87-9C66-F8BE8734C74E" sourceRef="sid-CBA258A8-EF00-44E0-836D-814E5A7A1517" targetRef="sid-9AFD8215-88AF-4C08-B851-23CAB3CF6BC0"></sequenceFlow>
+    <exclusiveGateway id="sid-EACD8D8C-DFC5-453E-A485-65CD18FD631A"></exclusiveGateway>
+    <sequenceFlow id="sid-88EC81BF-0BD9-482A-BAE7-1BDE51D4DE96" sourceRef="sid-9AFD8215-88AF-4C08-B851-23CAB3CF6BC0" targetRef="sid-EACD8D8C-DFC5-453E-A485-65CD18FD631A"></sequenceFlow>
+    <endEvent id="sid-ADE878E1-62B8-4402-B542-E5DB7550F0C5" name="结束"></endEvent>
+    <sequenceFlow id="sid-FF846D13-0C6F-400E-A62F-0B1226BC7E9E" name="项目评审通过" sourceRef="sid-EACD8D8C-DFC5-453E-A485-65CD18FD631A" targetRef="sid-ADE878E1-62B8-4402-B542-E5DB7550F0C5">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${state==1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-CFC80F6F-1861-4A2A-A3BE-F065C6BC4CEB" name="项目评审拒绝" sourceRef="sid-EACD8D8C-DFC5-453E-A485-65CD18FD631A" targetRef="sid-CBA258A8-EF00-44E0-836D-814E5A7A1517">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${state==0}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_financeApply">
+    <bpmndi:BPMNPlane bpmnElement="financeApply" id="BPMNPlane_financeApply">
+      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="90.0" y="105.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-CBA258A8-EF00-44E0-836D-814E5A7A1517" id="BPMNShape_sid-CBA258A8-EF00-44E0-836D-814E5A7A1517">
+        <omgdc:Bounds height="80.0" width="100.0" x="165.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-9AFD8215-88AF-4C08-B851-23CAB3CF6BC0" id="BPMNShape_sid-9AFD8215-88AF-4C08-B851-23CAB3CF6BC0">
+        <omgdc:Bounds height="80.0" width="100.0" x="310.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-EACD8D8C-DFC5-453E-A485-65CD18FD631A" id="BPMNShape_sid-EACD8D8C-DFC5-453E-A485-65CD18FD631A">
+        <omgdc:Bounds height="40.0" width="40.0" x="510.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-ADE878E1-62B8-4402-B542-E5DB7550F0C5" id="BPMNShape_sid-ADE878E1-62B8-4402-B542-E5DB7550F0C5">
+        <omgdc:Bounds height="28.0" width="28.0" x="660.0" y="106.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-BF2FF8BF-856B-4F87-9C66-F8BE8734C74E" id="BPMNEdge_sid-BF2FF8BF-856B-4F87-9C66-F8BE8734C74E">
+        <omgdi:waypoint x="265.0" y="120.0"></omgdi:waypoint>
+        <omgdi:waypoint x="310.0" y="120.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-88EC81BF-0BD9-482A-BAE7-1BDE51D4DE96" id="BPMNEdge_sid-88EC81BF-0BD9-482A-BAE7-1BDE51D4DE96">
+        <omgdi:waypoint x="410.0" y="120.14662756598241"></omgdi:waypoint>
+        <omgdi:waypoint x="510.44117647058823" y="120.44117647058823"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-4B24FEF7-030E-46D7-9D27-303D2CBB3EA9" id="BPMNEdge_sid-4B24FEF7-030E-46D7-9D27-303D2CBB3EA9">
+        <omgdi:waypoint x="120.0" y="120.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="120.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-CFC80F6F-1861-4A2A-A3BE-F065C6BC4CEB" id="BPMNEdge_sid-CFC80F6F-1861-4A2A-A3BE-F065C6BC4CEB">
+        <omgdi:waypoint x="530.5" y="139.5"></omgdi:waypoint>
+        <omgdi:waypoint x="530.5" y="240.0"></omgdi:waypoint>
+        <omgdi:waypoint x="215.0" y="240.0"></omgdi:waypoint>
+        <omgdi:waypoint x="215.0" y="160.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-FF846D13-0C6F-400E-A62F-0B1226BC7E9E" id="BPMNEdge_sid-FF846D13-0C6F-400E-A62F-0B1226BC7E9E">
+        <omgdi:waypoint x="549.5664335664336" y="120.43356643356644"></omgdi:waypoint>
+        <omgdi:waypoint x="660.0000849826545" y="120.04878019169809"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

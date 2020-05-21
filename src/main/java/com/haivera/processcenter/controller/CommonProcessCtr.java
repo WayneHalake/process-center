@@ -9,19 +9,24 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.impl.persistence.entity.*;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.ZipInputStream;
 
 /**
  * 通用的process接口
@@ -37,6 +42,30 @@ public class CommonProcessCtr {
     @Autowired
     private ICommonTaskSer commonTaskSer;
 
+    @Autowired
+    private RepositoryService repositoryService;
+
+    @ApiOperation(value = "创建流程", notes = "通过processKey创建流程,需指定busCode、busType")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "processKey", value = "流程图processKey", paramType="query", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "busCode", value = "业务编码", paramType="query", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "busType", value = "业务类型", paramType="query", required = true, dataType = "string"),
+        })
+    @PostMapping("/createPro4bus")
+    public ResponseInfo createPro(@RequestParam("processKey") String processKey, @RequestParam String busCode, @RequestParam String busType){
+        ResponseInfo resp = new ResponseInfo();
+        String processId = "";
+        try{
+            processId = commonProcessSer.startProcessInstanceByKey(processKey, busCode, busType);
+            resp.doSuccess("创建流程成功", processId);
+        }catch (Exception e){
+            e.printStackTrace();
+            resp.doFailed("创建流程失败");
+        }
+        return resp;
+    }
+
+
     /**
      * 创建流程实例
      * @param processKey
@@ -45,14 +74,17 @@ public class CommonProcessCtr {
     @ApiOperation(value = "创建流程", notes = "通过processKey创建流程")
     @ApiImplicitParam(name = "processKey", value = "流程图processKey", paramType="query", required = true, dataType = "string")
     @PostMapping("/createPro")
-    public String createPro(@RequestParam("processKey") String processKey){
+    public ResponseInfo createPro(@RequestParam("processKey") String processKey){
+        ResponseInfo resp = new ResponseInfo();
         String processId = "";
         try{
             processId = commonProcessSer.StartAndCreateProcess(processKey);
+            resp.doSuccess("创建流程成功", processId);
         }catch (Exception e){
             e.printStackTrace();
+            resp.doFailed("创建流程失败");
         }
-        return processId;
+        return resp;
     }
 
     /**
@@ -223,5 +255,41 @@ public class CommonProcessCtr {
         return resp;
     }
 
-
+    /**
+     * 手动发布流程，
+     * 可上传zip压缩文件（用于发布多个流程）
+     * 上传xml文件，用于发布单个流程
+     * @return
+     */
+    @ApiOperation(value = "手动发布流程", notes = "手动发布流程")
+    @PostMapping("/deploymentProcess")
+    public ResponseInfo deploymentProcess(@RequestParam MultipartFile file){
+        ResponseInfo resp = new ResponseInfo();
+        try{
+            String fileName = file.getOriginalFilename();
+            if(file.isEmpty()){
+                resp.doFailed("发布文件为空");
+                return resp;
+            }
+            //xml文件
+            if("text/xml".equals(file.getContentType())){
+                InputStream inputStream = file.getInputStream();
+                Deployment deployment = repositoryService.createDeployment().addInputStream(fileName, inputStream).deploy();
+                resp.doSuccess("发布成功！", deployment.getId());
+                return resp;
+            }
+            //zip压缩包格式文件 --多流程发布
+            if("application/x-zip-compressed".equals(file.getContentType())){
+                ZipInputStream zipInputStream = new ZipInputStream(file.getInputStream());
+                Deployment deployment = repositoryService.createDeployment().addZipInputStream(zipInputStream).deploy();
+                resp.doSuccess("发布成功", deployment.getId());
+                return resp;
+            }
+            resp.doFailed("文件格式不对，发布失败");
+        }catch (Exception e){
+            e.printStackTrace();
+            resp.doFailed("发布流程失败！", e);
+        }
+        return resp;
+    }
 }
