@@ -1,6 +1,8 @@
 package com.haivera.processcenter.service.impl;
 
 import com.haivera.processcenter.common.IdCombine;
+import com.haivera.processcenter.common.util.ResponseInfo;
+import com.haivera.processcenter.service.CommonHistoricSer;
 import com.haivera.processcenter.service.ICommonProcessSer;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.*;
@@ -46,6 +48,12 @@ public class CommonProcessImpl implements ICommonProcessSer {
     @Autowired
     ProcessEngine processEngine;
 
+    @Autowired
+    IdentityService identityService;
+
+    @Autowired
+    CommonHistoricSer commonHistoricSer;
+
     @Override
     public String StartAndCreateProcess(String processKey) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey);
@@ -55,15 +63,24 @@ public class CommonProcessImpl implements ICommonProcessSer {
     }
 
     @Override
-    public String startProcessInstanceByKey(String processKey, String busCode, String busType) {
+    public String startProcessInstanceByKey(String processKey, String busCode, String busType, String userId, String systemId) {
         logger.info("开始创建流程，业务编码[{}]，业务类型[{}]", busCode, busType);
         Map<String, Object> variables = new HashMap<>();
         variables.put("busCode", busCode);
         variables.put("busType", busType);
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, variables);
+
+        String startUserId = IdCombine.combineId(systemId, userId);
+        String businessKey = IdCombine.combineId(systemId, busCode);
+        identityService.setAuthenticatedUserId(startUserId); //设置流程发起人
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, businessKey, variables);
         String processInsId = processInstance.getId();
         logger.info("创建流程成功，流程key[{}]，流程实例化Id[{}]", processKey, processInsId);
         return processInsId;
+    }
+
+    @Override
+    public ResponseInfo listProcessInstanceStartBy(String systemId, String userId) {
+        return commonHistoricSer.listHisProcessInstance(null, systemId, userId, false);
     }
 
     @Override
@@ -74,11 +91,6 @@ public class CommonProcessImpl implements ICommonProcessSer {
     @Override
     public List<ProcessInstance> listAllProcessInstance() {
         return runtimeService.createProcessInstanceQuery().list();
-    }
-
-    @Override
-    public List<HistoricActivityInstance> listHistory(String processId) {
-        return historyService.createHistoricActivityInstanceQuery().processInstanceId(processId).list();
     }
 
     @Override

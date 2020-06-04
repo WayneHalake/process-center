@@ -2,10 +2,7 @@ package com.haivera.processcenter.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.haivera.processcenter.eventListener.TestEventListener;
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.engine.*;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.spring.ProcessEngineFactoryBean;
 import org.activiti.spring.SpringProcessEngineConfiguration;
@@ -43,6 +40,7 @@ public class ActivitConfiguration {
         SpringProcessEngineConfiguration spec = new SpringProcessEngineConfiguration();
         spec.setDataSource(dataSource());
         spec.setTransactionManager(platformTransactionManager);
+        spec.setHistory("full"); //保存完整的历史记录
         spec.setDatabaseSchemaUpdate("true");
         Resource[] resources = null;
         // 启动自动部署流程
@@ -91,5 +89,14 @@ public class ActivitConfiguration {
         return processEngine().getObject().getHistoryService();
     }
 
+    @Bean
+    public FormService formService() throws Exception{
+        return processEngine().getObject().getFormService();
+    }
+
+    @Bean
+    public IdentityService identityService() throws Exception{
+        return processEngine().getObject().getIdentityService();
+    }
 
 }

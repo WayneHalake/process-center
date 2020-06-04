@@ -1,5 +1,6 @@
 package com.haivera.processcenter.service;
 
+import com.haivera.processcenter.common.util.ResponseInfo;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 
@@ -25,7 +26,7 @@ public interface ICommonProcessSer {
      * @param busType  业务类型
      * @return
      */
-    String startProcessInstanceByKey(String processDefinitionKey, String busCode, String busType);
+    String startProcessInstanceByKey(String processDefinitionKey, String busCode, String busType, String userId, String systemId);
     /**
      * 按流程key查找运行中的流程实例
      * @param processKey
@@ -35,18 +36,19 @@ public interface ICommonProcessSer {
     List<ProcessInstance> listProcessInstance(String processKey) throws Exception;
 
     /**
+     * 通过流程发起人查找流程实例
+     * @param systemId
+     * @param userId
+     * @return
+     */
+    ResponseInfo listProcessInstanceStartBy(String systemId, String userId);
+
+    /**
      * 获取所有的正在运行的流程实例
      * @return
      * @throws Exception
      */
     List<ProcessInstance> listAllProcessInstance() throws Exception;
-
-    /**
-     * 按流程id查询该流程的历史记录
-     * @param processId
-     * @return
-     */
-    List<HistoricActivityInstance> listHistory(String processId) throws Exception;
 
     /**
      * 获取流程图
@@ -78,7 +80,7 @@ public interface ICommonProcessSer {
      * @return
      * @throws Exception
      */
-    boolean isFinishedProcess(String processId) throws Exception;
+    boolean isFinishedProcess(String processId);
 
     /**
      * 通过流程id获取流程

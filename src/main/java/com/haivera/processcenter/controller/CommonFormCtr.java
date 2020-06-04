@@ -5,6 +5,7 @@ import com.haivera.processcenter.common.GeneralCommonMap;
 import com.haivera.processcenter.common.util.ResponseInfo;
 import com.haivera.processcenter.service.ICommonProcessSer;
 import com.haivera.processcenter.service.ICommonTaskSer;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +32,7 @@ import java.util.Map;
 /**
  * 表单相关操作
  */
+@Api("表单、流程变量、任务变量等操作")
 @RestController
 @RequestMapping("/commonForm")
 public class CommonFormCtr {
@@ -53,6 +55,9 @@ public class CommonFormCtr {
     @Autowired
     private GeneralCommonMap generalCommonMap;
 
+    @Autowired
+    private FormService formService;
+
     /**
      * 获取开始事件上的表单数据
      *
@@ -67,7 +72,6 @@ public class CommonFormCtr {
         try {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey(processKey).singleResult();
             String processDefinitionId = processDefinition.getId();
-            FormService formService = processEngine.getFormService();
             String formKey = formService.getStartFormKey(processDefinitionId);
             StartFormData startFormData = formService.getStartFormData(processDefinitionId);
             List<FormProperty> formPropertyList = startFormData.getFormProperties();
@@ -106,7 +110,6 @@ public class CommonFormCtr {
         try {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey(processKey).singleResult();
             String processDefinitionId = processDefinition.getId();
-            FormService formService = processEngine.getFormService();
             HashMap<String, String> propertiesMap = JSONObject.parseObject(properties.toJSONString(), HashMap.class);
             ProcessInstance processInstance = formService.submitStartFormData(processDefinitionId, propertiesMap);
 
@@ -138,7 +141,6 @@ public class CommonFormCtr {
     public ResponseInfo getTaskFormData(String taskId) {
         ResponseInfo resp = new ResponseInfo();
         try {
-            FormService formService = processEngine.getFormService();
             TaskFormData taskFormData = formService.getTaskFormData(taskId);
             List<FormProperty> formPropertyList = taskFormData.getFormProperties();
             List<FormPropertyImpl> formPropertyImplList = new ArrayList<>();
@@ -173,7 +175,6 @@ public class CommonFormCtr {
     public ResponseInfo submitTaskFormData(@RequestParam String taskId, @RequestBody JSONObject properties) {
         ResponseInfo resp = new ResponseInfo();
         try {
-            FormService formService = processEngine.getFormService();
             HashMap<String, String> propertiesMap = JSONObject.parseObject(properties.toJSONString(), HashMap.class);
             formService.submitTaskFormData(taskId, propertiesMap);
             resp.doSuccess("提交表单成功");
@@ -200,7 +201,6 @@ public class CommonFormCtr {
     public ResponseInfo saveFormData(@RequestParam  String taskId, @RequestBody JSONObject properties) {
         ResponseInfo resp = new ResponseInfo();
         try {
-            FormService formService = processEngine.getFormService();
             HashMap<String, String> propertiesMap = JSONObject.parseObject(properties.toJSONString(), HashMap.class);
             formService.saveFormData(taskId, propertiesMap);
             resp.doSuccess("保存表单成功");
@@ -215,6 +215,7 @@ public class CommonFormCtr {
      * 设置任务变量 -- 与 @saveFormData功能一致
      * 任务变量会随着流程的进行，传递到每一个任务节点
      * 任务必须在运行状态
+     * 添加的变量为流程级
      * @param taskId
      * @param properties
      * @return
@@ -241,10 +242,11 @@ public class CommonFormCtr {
     /**
      * 获取任务变量（可用于获取提交至任务表单中的数据）
      * 将获取所有的任务变量
+     *
      * @param taskId
      * @return
      */
-    @ApiOperation(value = "获取任务变量", notes = "获取任务变量（可用于获取提交至任务表单中的数据），将获取所有的任务变量")
+    @ApiOperation(value = "获取任务变量", notes = "获取任务变量（可用于获取提交至任务表单中的数据），将获取所有的任务变量。任务必须在运行状态")
     @ApiImplicitParam(name = "taskId", value = "taskId", paramType = "query", required = true, dataType = "string")
     @GetMapping("/getVariables")
     public ResponseInfo getVariables(String taskId){

@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * 用户、用户组（角色）、用户与用户组（角色）绑定关系
  */
-@Api("流程操作接口")
+@Api("用户、用户组（角色）、用户与用户组（角色）绑定关系")
 @RequestMapping("/identityCtr")
 @RestController
 public class CommonIdentityCtr {

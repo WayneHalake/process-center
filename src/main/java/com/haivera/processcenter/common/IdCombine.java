@@ -16,7 +16,9 @@ public class IdCombine {
         if(StringUtils.isNotEmpty(systemId)){
             sb.append(systemId).append("_");
         }
-        sb.append(userIdOrGroupId);
+        if(StringUtils.isNotEmpty(userIdOrGroupId)){
+            sb.append(userIdOrGroupId);
+        }
         return sb.toString();
     }
 }

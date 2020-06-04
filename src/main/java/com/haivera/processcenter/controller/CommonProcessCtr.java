@@ -45,19 +45,33 @@ public class CommonProcessCtr {
     @Autowired
     private RepositoryService repositoryService;
 
+
+
     @ApiOperation(value = "创建流程", notes = "通过processKey创建流程,需指定busCode、busType")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "processKey", value = "流程图processKey", paramType="query", required = true, dataType = "string"),
             @ApiImplicitParam(name = "busCode", value = "业务编码", paramType="query", required = true, dataType = "string"),
             @ApiImplicitParam(name = "busType", value = "业务类型", paramType="query", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "userId", value = "userId", paramType="query", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "systemId", value = "systemId", paramType="query", required = true, dataType = "string"),
         })
     @PostMapping("/createPro4bus")
-    public ResponseInfo createPro(@RequestParam("processKey") String processKey, @RequestParam String busCode, @RequestParam String busType){
+    public ResponseInfo createPro(@RequestParam("processKey") String processKey,
+                                  @RequestParam String busCode, @RequestParam String busType,
+                                  @RequestParam String userId, @RequestParam String systemId){
         ResponseInfo resp = new ResponseInfo();
         String processId = "";
         try{
-            processId = commonProcessSer.startProcessInstanceByKey(processKey, busCode, busType);
-            resp.doSuccess("创建流程成功", processId);
+            processId = commonProcessSer.startProcessInstanceByKey(processKey, busCode, busType, userId, systemId);
+            List<Task> tasks = commonTaskSer.currentTask(processId);
+            List<String> taskIds = new ArrayList<>();
+            for (Task task : tasks) {
+                taskIds.add(task.getId());
+            }
+            HashMap<String, Object> map = new HashMap();
+            map.put("processId", processId);
+            map.put("currentTaskId", taskIds.get(0));
+            resp.doSuccess("创建流程成功", map);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("创建流程失败");
@@ -79,7 +93,15 @@ public class CommonProcessCtr {
         String processId = "";
         try{
             processId = commonProcessSer.StartAndCreateProcess(processKey);
-            resp.doSuccess("创建流程成功", processId);
+            List<Task> tasks = commonTaskSer.currentTask(processId);
+            List<String> taskIds = new ArrayList<>();
+            for (Task task : tasks) {
+                taskIds.add(task.getId());
+            }
+            HashMap<String, Object> map = new HashMap();
+            map.put("processId", processId);
+            map.put("currentTaskId", taskIds.get(0));
+            resp.doSuccess("创建流程成功", map);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("创建流程失败");
@@ -231,37 +253,12 @@ public class CommonProcessCtr {
     }
 
     /**
-     * 获取流程的历史记录
-     * @param processId
-     * @return
-     */
-    @ApiOperation(value = "获取流程的历史记录", notes = "获取流程的历史记录")
-    @ApiImplicitParam(name = "processId", value = "流程实例processId", paramType="query", required = true, dataType = "string")
-    @GetMapping("/listHistory")
-    public ResponseInfo listHistory(String processId){
-        ResponseInfo resp = new ResponseInfo();
-        try{
-            List<HistoricActivityInstance> result = commonProcessSer.listHistory(processId);
-            List<Object> datas = new ArrayList<>();
-            for(HistoricActivityInstance historicActivityInstance : result){
-                HistoricActivityInstanceEntityImpl entity = (HistoricActivityInstanceEntityImpl) historicActivityInstance;
-                datas.add(entity.getPersistentState());
-            }
-            resp.doSuccess("获取流程历史记录成功！", datas);
-        }catch (Exception e){
-            e.printStackTrace();
-            resp.doFailed("获取流程历史记录失败！", e);
-        }
-        return resp;
-    }
-
-    /**
      * 手动发布流程，
      * 可上传zip压缩文件（用于发布多个流程）
      * 上传xml文件，用于发布单个流程
      * @return
      */
-    @ApiOperation(value = "手动发布流程", notes = "手动发布流程")
+    @ApiOperation(value = "手动发布流程", notes = "手动发布流程，可上传zip压缩文件（用于发布多个流程）。上传xml文件（用于发布单个流程）。")
     @PostMapping("/deploymentProcess")
     public ResponseInfo deploymentProcess(@RequestParam MultipartFile file){
         ResponseInfo resp = new ResponseInfo();

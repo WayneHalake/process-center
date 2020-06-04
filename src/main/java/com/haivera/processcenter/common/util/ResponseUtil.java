@@ -13,6 +13,9 @@ public class ResponseUtil {
 	public static final String SUCCESS_CODE = "000000";
 	public static final String SUCCESS_MSG = "成功";
 
+	public static final String FINISH_CODE = "000001";
+	public static final String FINISH_MSG = "流程结束";
+
 	public static final String FAILED_CODE = "999999";
 	public static final String FAILED_MSG = "由于系统原因导致异常，请稍后重试。如有问题，请联系管理员。";
 

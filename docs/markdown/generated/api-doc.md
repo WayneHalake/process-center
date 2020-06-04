@@ -1,4 +1,4 @@
-# process-center RESTful API
+# workflow RESTful API
 
 
 <a name="overview"></a>
@@ -18,6 +18,7 @@
 ### 标签
 
 * common-form-ctr : Common Form Ctr
+* common-historic-ctr : Common Historic Ctr
 * common-identity-ctr : Common Identity Ctr
 * common-process-ctr : Common Process Ctr
 * common-task-ctr : Common Task Ctr
@@ -59,6 +60,11 @@ GET /commonForm/getStartFormData
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -124,6 +130,11 @@ GET /commonForm/getTaskFormData
 |**404**|Not Found|无内容|
 
 
+##### 消耗
+
+* `application/json`
+
+
 ##### 生成
 
 * `*/*`
@@ -167,7 +178,7 @@ GET /commonForm/getVariables
 
 
 ##### 说明
-获取任务变量（可用于获取提交至任务表单中的数据），将获取所有的任务变量
+获取任务变量（可用于获取提交至任务表单中的数据），将获取所有的任务变量。任务必须在运行状态
 
 
 ##### 参数
@@ -185,6 +196,11 @@ GET /commonForm/getVariables
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -248,6 +264,11 @@ GET /commonForm/getVariablesLocal
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -670,9 +691,1270 @@ json :
 ```
 
 
+<a name="common-historic-ctr_resource"></a>
+### Common-historic-ctr
+Common Historic Ctr
+
+
+<a name="listhisprocessbykeyusingget"></a>
+#### 通过processKey获取流程活动历史记录
+```
+GET /commonHistoricCtr/listHisProcessByKey
+```
+
+
+##### 说明
+通过processKey获取流程活动（流程的所有记录）历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processKey**  <br>*必填*|流程定义key|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisProcessByKey
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processKey" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhisprocessusingget"></a>
+#### 通过流程processKey、任务处理人获取流程活动历史记录
+```
+GET /commonHistoricCtr/listHisProcessByKeyAndUser
+```
+
+
+##### 说明
+通过流程processKey、任务处理人获取流程活动历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processKey**  <br>*必填*|流程定义key|string|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+|**Query**|**userId**  <br>*必填*|userId用户id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisProcessByKeyAndUser
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processKey" : "string",
+  "systemId" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhisprocessbyuserusingget"></a>
+#### 通过流程发起人获取流程活动历史记录
+```
+GET /commonHistoricCtr/listHisProcessByUser
+```
+
+
+##### 说明
+通过流程发起人获取流程活动（流程的所有记录）历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+|**Query**|**userId**  <br>*必填*|userId用户id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisProcessByUser
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "systemId" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhisprocessinstancebykeyusingget"></a>
+#### 通过processKey获取流程实例历史记录
+```
+GET /commonHistoricCtr/listHisProcessInstanceByKey
+```
+
+
+##### 说明
+通过processKey获取流程实例历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processKey**  <br>*必填*|流程定义key|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisProcessInstanceByKey
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processKey" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhisprocessinstancebykeyanduserusingget"></a>
+#### 通过流程processKey、发起人获取流程实例历史记录
+```
+GET /commonHistoricCtr/listHisProcessInstanceByKeyAndUser
+```
+
+
+##### 说明
+通过流程processKey、发起人获取流程实例历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processKey**  <br>*必填*|流程定义key|string|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+|**Query**|**userId**  <br>*必填*|userId用户id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisProcessInstanceByKeyAndUser
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processKey" : "string",
+  "systemId" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhisprocessinstancebyuserusingget"></a>
+#### 通过流程发起人获取流程实例历史记录
+```
+GET /commonHistoricCtr/listHisProcessInstanceByUser
+```
+
+
+##### 说明
+通过流程发起人获取流程实例历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+|**Query**|**userId**  <br>*必填*|userId用户id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisProcessInstanceByUser
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "systemId" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhistaskusingget_3"></a>
+#### 通过流程processId、任务处理人、任务名称获取流程任务历史记录
+```
+GET /commonHistoricCtr/listHisTask
+```
+
+
+##### 说明
+通过流程processId、任务处理人、任务名称获取流程任务历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processId**  <br>*必填*|流程实例id|string|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+|**Query**|**taskName**  <br>*必填*|任务节点名称|string|
+|**Query**|**userId**  <br>*必填*|userId用户id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisTask
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processId" : "string",
+  "systemId" : "string",
+  "taskName" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhistaskusingget_2"></a>
+#### 通过processId获取流程的任务历史记录
+```
+GET /commonHistoricCtr/listHisTaskById
+```
+
+
+##### 说明
+通过processId获取流程的任务历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processId**  <br>*必填*|流程实例id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisTaskById
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhistaskusingget"></a>
+#### 通过流程processId、任务名称获取流程任务历史记录
+```
+GET /commonHistoricCtr/listHisTaskByIdAndTaskName
+```
+
+
+##### 说明
+通过流程processId、任务名称获取流程任务历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processId**  <br>*必填*|流程实例id|string|
+|**Query**|**taskName**  <br>*必填*|任务节点名称|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisTaskByIdAndTaskName
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processId" : "string",
+  "taskName" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhistaskusingget_1"></a>
+#### 通过流程processId、任务处理人获取流程任务历史记录
+```
+GET /commonHistoricCtr/listHisTaskByIdAndUser
+```
+
+
+##### 说明
+通过流程processId、任务处理人获取流程任务历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processId**  <br>*必填*|流程实例id|string|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+|**Query**|**userId**  <br>*必填*|userId用户id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisTaskByIdAndUser
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processId" : "string",
+  "systemId" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhistaskbyuserusingget"></a>
+#### 通过流程任务处理人获取流程任务历史记录
+```
+GET /commonHistoricCtr/listHisTaskByUser
+```
+
+
+##### 说明
+通过流程任务处理人获取流程任务历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+|**Query**|**userId**  <br>*必填*|userId用户id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisTaskByUser
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "systemId" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhisvariableusingget_1"></a>
+#### 通过processId获取流程变量历史记录
+```
+GET /commonHistoricCtr/listHisVariableById
+```
+
+
+##### 说明
+通过processId获取流程变量历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processId**  <br>*必填*|流程实例id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisVariableById
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhisvariableusingget"></a>
+#### 通过流程processId、任务id获取流程变量历史记录
+```
+GET /commonHistoricCtr/listHisVariableByIdAndTaskId
+```
+
+
+##### 说明
+通过流程processId、任务id获取流程变量历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**processId**  <br>*必填*|流程实例id|string|
+|**Query**|**taskId**  <br>*必填*|任务id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisVariableByIdAndTaskId
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "processId" : "string",
+  "taskId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="listhisvariablebytaskidusingget"></a>
+#### 通过taskId获取流程变量历史记录
+```
+GET /commonHistoricCtr/listHisVariableByTaskId
+```
+
+
+##### 说明
+通过taskId获取流程变量历史记录
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**taskId**  <br>*必填*|任务Id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/commonHistoricCtr/listHisVariableByTaskId
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "taskId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
 <a name="common-identity-ctr_resource"></a>
 ### Common-identity-ctr
 Common Identity Ctr
+
+
+<a name="getgrouplistbysystemidusingget"></a>
+#### 通过systemId获取用户组列表
+```
+GET /identityCtr/getGroupListBySystemId
+```
+
+
+##### 说明
+通过systemId获取用户组列表
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/identityCtr/getGroupListBySystemId
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "systemId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="getgrouplistbyuseridusingget"></a>
+#### 通过用户获取 用户所在的用户组信息
+```
+GET /identityCtr/getGroupListByUserId
+```
+
+
+##### 说明
+通过用户获取 用户所在的用户组信息
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**systemId**  <br>*必填*|系统id|string|
+|**Query**|**userId**  <br>*必填*|用户id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/identityCtr/getGroupListByUserId
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "systemId" : "string",
+  "userId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="getuserlistbygroupidusingget"></a>
+#### 通过用户组获取用户列表
+```
+GET /identityCtr/getUserListByGroupId
+```
+
+
+##### 说明
+通过用户组获取用户列表
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**groupId**  <br>*必填*|用户组id|string|
+|**Query**|**systemId**  <br>*必填*|系统id|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/identityCtr/getUserListByGroupId
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "groupId" : "string",
+  "systemId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="getuserlistbysystemidusingget"></a>
+#### 通过systemId获取用户列表
+```
+GET /identityCtr/getUserListBySystemId
+```
+
+
+##### 说明
+通过systemId获取用户列表
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**systemId**  <br>*必填*|systemId|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/identityCtr/getUserListBySystemId
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "systemId" : "string"
+}
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
 
 
 <a name="synuserandgroupmembershipusingpost"></a>
@@ -1425,7 +2707,7 @@ POST /processCtr/deploymentProcess
 
 
 ##### 说明
-手动发布流程
+手动发布流程，可上传zip压缩文件（用于发布多个流程）。上传xml文件（用于发布单个流程）。
 
 
 ##### 参数
@@ -1513,6 +2795,11 @@ GET /processCtr/getImage
 |**404**|Not Found|无内容|
 
 
+##### 消耗
+
+* `application/json`
+
+
 ##### 生成
 
 * `*/*`
@@ -1562,6 +2849,11 @@ GET /processCtr/getProcessByProcessId
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -1627,6 +2919,11 @@ GET /processCtr/getProcessByTaskId
 |**404**|Not Found|无内容|
 
 
+##### 消耗
+
+* `application/json`
+
+
 ##### 生成
 
 * `*/*`
@@ -1683,6 +2980,11 @@ GET /processCtr/listAllProcessInstance
 |**404**|Not Found|无内容|
 
 
+##### 消耗
+
+* `application/json`
+
+
 ##### 生成
 
 * `*/*`
@@ -1735,6 +3037,11 @@ GET /processCtr/listHistory
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -1798,6 +3105,11 @@ GET /processCtr/listProcess
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -2203,10 +3515,11 @@ POST /taskCtr/complete
 
 |类型|名称|说明|类型|
 |---|---|---|---|
+|**Query**|**checkAssignee**  <br>*可选*|检查任务处理人|string|
 |**Query**|**systemId**  <br>*必填*|系统标识id|string|
 |**Query**|**taskId**  <br>*必填*|任务taskId|string|
 |**Query**|**userId**  <br>*必填*|用户id|string|
-|**Body**|**varAndTransientVar**  <br>*可选*|任务所需参数|string|
+|**Body**|**variables**  <br>*可选*|任务所需参数|string|
 
 
 ##### 响应
@@ -2242,6 +3555,175 @@ POST /taskCtr/complete
 ```
 json :
 {
+  "checkAssignee" : "string",
+  "systemId" : "string",
+  "taskId" : "string",
+  "userId" : "string"
+}
+```
+
+
+###### 请求 body
+```
+json :
+{ }
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="completetaskwithnextuseridusingpost"></a>
+#### 完成一个任务(非委托任务)
+```
+POST /taskCtr/completeTaskWithNextUserId
+```
+
+
+##### 说明
+完成一个任务(非委托任务)，并给下一任务节点分配处理人
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**checkAssignee**  <br>*可选*|检查任务处理人|string|
+|**Query**|**nextUserId**  <br>*必填*|下一任务处理人 用户id|string|
+|**Query**|**systemId**  <br>*必填*|系统标识id|string|
+|**Query**|**taskId**  <br>*必填*|任务taskId|string|
+|**Query**|**userId**  <br>*必填*|用户id|string|
+|**Body**|**variables**  <br>*可选*|任务所需参数|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/taskCtr/completeTaskWithNextUserId
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "checkAssignee" : "string",
+  "nextUserId" : "string",
+  "systemId" : "string",
+  "taskId" : "string",
+  "userId" : "string"
+}
+```
+
+
+###### 请求 body
+```
+json :
+{ }
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="completewithtransientvarusingpost"></a>
+#### 完成一个任务(非委托任务)
+```
+POST /taskCtr/completeWithTransientVar
+```
+
+
+##### 说明
+完成一个任务(非委托任务) varAndTransientVar参数中包含瞬时变量
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**checkAssignee**  <br>*可选*|检查任务处理人|string|
+|**Query**|**systemId**  <br>*必填*|系统标识id|string|
+|**Query**|**taskId**  <br>*必填*|任务taskId|string|
+|**Query**|**userId**  <br>*必填*|用户id|string|
+|**Body**|**varAndTransientVar**  <br>*可选*|任务所需参数|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/taskCtr/completeWithTransientVar
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "checkAssignee" : "string",
   "systemId" : "string",
   "taskId" : "string",
   "userId" : "string"
@@ -2295,6 +3777,11 @@ GET /taskCtr/currentTask
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -2433,6 +3920,11 @@ GET /taskCtr/getIdentityLinksForTask
 |**404**|Not Found|无内容|
 
 
+##### 消耗
+
+* `application/json`
+
+
 ##### 生成
 
 * `*/*`
@@ -2494,6 +3986,11 @@ GET /taskCtr/getTaskById
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -2559,6 +4056,11 @@ GET /taskCtr/listRunTask
 |**404**|Not Found|无内容|
 
 
+##### 消耗
+
+* `application/json`
+
+
 ##### 生成
 
 * `*/*`
@@ -2622,6 +4124,11 @@ GET /taskCtr/listTaskByProcessKey
 |**401**|Unauthorized|无内容|
 |**403**|Forbidden|无内容|
 |**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
 
 
 ##### 生成
@@ -2690,6 +4197,11 @@ GET /taskCtr/listTaskByUserId
 |**404**|Not Found|无内容|
 
 
+##### 消耗
+
+* `application/json`
+
+
 ##### 生成
 
 * `*/*`
@@ -2741,8 +4253,10 @@ POST /taskCtr/resolveTask
 
 |类型|名称|说明|类型|
 |---|---|---|---|
+|**Query**|**systemId**  <br>*必填*|系统标识id|string|
 |**Query**|**taskId**  <br>*必填*|任务taskId|string|
-|**Body**|**varAndTransientVar**  <br>*可选*|任务所需参数|string|
+|**Query**|**userId**  <br>*必填*|用户id|string|
+|**Body**|**variables**  <br>*可选*|任务所需参数|string|
 
 
 ##### 响应
@@ -2778,7 +4292,90 @@ POST /taskCtr/resolveTask
 ```
 json :
 {
-  "taskId" : "string"
+  "systemId" : "string",
+  "taskId" : "string",
+  "userId" : "string"
+}
+```
+
+
+###### 请求 body
+```
+json :
+{ }
+```
+
+
+##### HTTP响应示例
+
+###### 响应 200
+```
+json :
+{
+  "data" : "object",
+  "rtnCode" : "string",
+  "rtnMsg" : "string"
+}
+```
+
+
+<a name="resolvetaskwithtransientvarusingpost"></a>
+#### 处理委托任务
+```
+POST /taskCtr/resolveTaskWithTransientVar
+```
+
+
+##### 说明
+处理委托任务 varAndTransientVar参数中包含瞬时变量
+
+
+##### 参数
+
+|类型|名称|说明|类型|
+|---|---|---|---|
+|**Query**|**systemId**  <br>*必填*|系统标识id|string|
+|**Query**|**taskId**  <br>*必填*|任务taskId|string|
+|**Query**|**userId**  <br>*必填*|用户id|string|
+|**Body**|**varAndTransientVar**  <br>*可选*|任务所需参数|string|
+
+
+##### 响应
+
+|HTTP代码|说明|类型|
+|---|---|---|
+|**200**|OK|[ResponseInfo](#responseinfo)|
+|**201**|Created|无内容|
+|**401**|Unauthorized|无内容|
+|**403**|Forbidden|无内容|
+|**404**|Not Found|无内容|
+
+
+##### 消耗
+
+* `application/json`
+
+
+##### 生成
+
+* `*/*`
+
+
+##### HTTP请求示例
+
+###### 请求 path
+```
+/taskCtr/resolveTaskWithTransientVar
+```
+
+
+###### 请求 query
+```
+json :
+{
+  "systemId" : "string",
+  "taskId" : "string",
+  "userId" : "string"
 }
 ```
 
@@ -2886,7 +4483,7 @@ json :
 
 |名称|说明|类型|
 |---|---|---|
-|**bytes**  <br>*可选*|**模式** : `"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$"`**样例** : `"string"`|string (byte)|
+|**bytes**  <br>*可选*|**样例** : `[ "string" ]`|< string (byte) > array|
 |**deleted**  <br>*可选*|**样例** : `true`|boolean|
 |**deploymentId**  <br>*可选*|**样例** : `"string"`|string|
 |**id**  <br>*可选*|**样例** : `"string"`|string|
@@ -2903,7 +4500,7 @@ json :
 
 |名称|说明|类型|
 |---|---|---|
-|**bytes**  <br>*可选*|**模式** : `"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$"`**样例** : `"string"`|string (byte)|
+|**bytes**  <br>*可选*|**样例** : `[ "string" ]`|< string (byte) > array|
 |**deleted**  <br>*可选*|**样例** : `true`|boolean|
 |**entity**  <br>*可选*|**样例** : `"[bytearrayentity](#bytearrayentity)"`|[ByteArrayEntity](#bytearrayentity)|
 |**id**  <br>*可选*|**样例** : `"string"`|string|
@@ -2936,7 +4533,7 @@ json :
 
 |名称|说明|类型|
 |---|---|---|
-|**bytes**  <br>*可选*|**模式** : `"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==\|[A-Za-z0-9+/]{3}=)?$"`**样例** : `"string"`|string (byte)|
+|**bytes**  <br>*可选*|**样例** : `[ "string" ]`|< string (byte) > array|
 |**inputStream**  <br>*可选*|**样例** : `"[inputstream](#inputstream)"`|[InputStream](#inputstream)|
 |**mimeType**  <br>*可选*|**样例** : `"string"`|string|
 

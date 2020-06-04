@@ -1,6 +1,7 @@
 package com.haivera.processcenter.service;
 
 import com.haivera.processcenter.common.util.ResponseInfo;
+import org.activiti.bpmn.model.FlowElement;
 import org.activiti.engine.task.IdentityLink;
 import org.activiti.engine.task.Task;
 
@@ -17,11 +18,12 @@ public interface ICommonTaskSer {
      * 完成一个任务(非委托任务)
      * @param taskId 任务id
      * @param variables 任务所需的参数
-     * @param userId 任务执行人
      * @param systemId 系统id
+     * @param userId 任务执行人
+     * @param checkAssignee 是否检查任务处理人
      * @return 下一个任务的id
      */
-    String completeTask(String taskId, HashMap<String, Object> variables, String systemId, String userId) throws Exception;
+    ResponseInfo completeTask(String taskId, HashMap<String, Object> variables, String systemId, String userId, boolean checkAssignee) throws Exception;
 
     /**
      * 完成一个任务（非委托任务）
@@ -30,10 +32,24 @@ public interface ICommonTaskSer {
      * @param transientVariables transient所需的参数
      * @param systemId
      * @param userId
+     * @param checkAssignee 是否检查任务处理人
      * @return
      * @throws Exception
      */
-    String completeTask(String taskId, HashMap<String, Object> variables, HashMap<String, Object> transientVariables, String systemId, String userId) throws Exception;
+    ResponseInfo completeTask(String taskId, HashMap<String, Object> variables, HashMap<String, Object> transientVariables, String systemId, String userId, boolean checkAssignee) throws Exception;
+
+    /**
+     * 完成一个任务（非委托任务）
+     * @param taskId
+     * @param variables 任务所需的参数
+     * @param systemId 系统id
+     * @param userId 任务执行人
+     * @param nextUserId 下一任务节点的处理人
+     * @param checkAssignee 是否检查任务处理人
+     * @return
+     * @throws Exception
+     */
+    ResponseInfo completeTaskWithNextUserId(String taskId, HashMap<String, Object> variables, String systemId, String userId, String nextUserId, boolean checkAssignee) throws Exception;
 
     /**
      * 委托任务给userId
@@ -48,7 +64,7 @@ public interface ICommonTaskSer {
      * @param taskId
      * @param variables
      */
-    void resolveTask(String taskId, Map<String, Object> variables);
+    ResponseInfo resolveTask(String taskId, Map<String, Object> variables, String systemId, String userId);
 
     /**
      * 处理委托任务 不会完成任务
@@ -56,14 +72,27 @@ public interface ICommonTaskSer {
      * @param variables
      * @param transientVariables
      */
-    void resolveTask(String taskId, Map<String, Object> variables, Map<String, Object> transientVariables);
+    ResponseInfo resolveTask(String taskId, Map<String, Object> variables, Map<String, Object> transientVariables, String systemId, String userId);
 
     /**
      * 查询流程的当前
      * @param processId 流程id 流程创建(实例化)之后的id
      * @return 当前运行的任务
      */
-    List<Task> currentTask(String processId) throws Exception;
+    List<Task> currentTask(String processId);
+
+    /**
+     * 获取当前任务的下一任务信息
+     *
+     *      * ***注意***
+     *      * 如果在网关之后存在多条SequenceFlow时，需要至少有一条SequenceFlow的name为"通过"，否则获取为空
+     *      * ***注意***
+     *
+     * @param taskId
+     * @return
+     * @throws Exception
+     */
+    List<FlowElement> getNextTask(String taskId) throws Exception;
 
     /**
      * 按流程key查询用户的任务列表

@@ -53,6 +53,11 @@ public class ResponseInfo<T> {
         this.data = data;
     }
 
+    public void doFinish(String rtnMsg){
+        this.rtnCode = ResponseUtil.FINISH_CODE;
+        this.rtnMsg = rtnMsg;
+    }
+
     public void doSuccess(String rtnMsg){
         this.rtnCode = ResponseUtil.SUCCESS_CODE;
         this.rtnMsg = rtnMsg;
