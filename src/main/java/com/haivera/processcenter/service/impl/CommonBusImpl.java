@@ -56,7 +56,6 @@ public class CommonBusImpl implements ICommonBusSer {
         businessKey = IdCombine.combineId(systemId, businessKey);
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(businessKey).singleResult();
         HashMap<String, Object> processInfo = new HashMap<>();
-        List<Object> taskInfos = new ArrayList<>();
         String processId = "";
         if(processInstance != null){
             ExecutionEntityImpl entity = (ExecutionEntityImpl) processInstance;
@@ -69,19 +68,17 @@ public class CommonBusImpl implements ICommonBusSer {
             processId = historicProcessInstance.getId();
         }
 
+        map.put("processId", processId);
+        map.put("processInfo", processInfo);
+
         if(commonProcessSer.isFinishedProcess(processId)){
             map.put("isFinish", true);
         }else {
             map.put("isFinish", false);
-            List<Task> taskList = commonTaskSer.currentTask(processId);
-            for (Task task : taskList) {
-                TaskEntityImpl taskEntity = (TaskEntityImpl) task;
-                taskInfos.add(generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
-            }
+            ResponseInfo responseInfo = commonTaskSer.currentTasks(processId);
+            map.put("taskInfo", responseInfo.getData());
         }
-        map.put("processId", processId);
-        map.put("processInfo", processInfo);
-        map.put("taskInfo", taskInfos);
+
         resp.doSuccess("获取流程基本信息成功！", map);
         return resp;
     }

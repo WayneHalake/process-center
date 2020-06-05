@@ -1,5 +1,6 @@
 package com.haivera.processcenter.service.impl;
 
+import com.haivera.processcenter.common.GeneralCommonMap;
 import com.haivera.processcenter.common.IdCombine;
 import com.haivera.processcenter.common.util.ResponseInfo;
 import com.haivera.processcenter.common.util.ResponseUtil;
@@ -8,6 +9,7 @@ import com.haivera.processcenter.service.ICommonTaskSer;
 import org.activiti.bpmn.model.*;
 import org.activiti.bpmn.model.Process;
 import org.activiti.engine.*;
+import org.activiti.engine.impl.persistence.entity.TaskEntityImpl;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.DelegationState;
 import org.activiti.engine.task.IdentityLink;
@@ -36,6 +38,9 @@ public class CommonTaskImpl implements ICommonTaskSer {
 
     @Autowired
     private ProcessEngine processEngine;
+
+    @Autowired
+    private GeneralCommonMap generalCommonMap;
 
     @Override
     public ResponseInfo completeTask(String taskId, HashMap<String, Object> variables, String systemId, String userId, boolean checkAssignee) throws Exception {
@@ -91,6 +96,15 @@ public class CommonTaskImpl implements ICommonTaskSer {
             resp.doSuccess("任务处理成功！", map);
             return resp;
         }
+
+        if(nextTasks == null || nextTasks.size() == 0){ //流程进入子流程的情况
+            ResponseInfo subProcessInfo = commonProcessSer.getSubProcessByProcessId(task.getProcessInstanceId());
+            HashMap<String, Object> map = new HashMap();
+            map.put("subProcessInfo", subProcessInfo);
+            resp.doSuccess("任务处理成功！当前流程在子流程中。", subProcessInfo);
+            return resp;
+        }
+
         String nextTaskId = nextTasks.get(0).getId();
         Map<String, String> map = new HashMap<>();
         map.put("assignee", nextTasks.get(0).getAssignee());
@@ -168,6 +182,28 @@ public class CommonTaskImpl implements ICommonTaskSer {
     public List<Task> currentTask(String processId) {
         List<Task> taskList = taskService.createTaskQuery().processInstanceId(processId).list();
         return taskList;
+    }
+
+    @Override
+    public ResponseInfo currentTasks(String processId) {
+        ResponseInfo resp = new ResponseInfo();
+        List<Object> datas = new ArrayList<>();
+
+        List<Task> taskList = currentTask(processId);
+        if(taskList == null || taskList.size() == 0){
+            ResponseInfo subProcessInfo = commonProcessSer.getSubProcessByProcessId(processId);
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("subProcessInfo", subProcessInfo.getData());
+            resp.doSuccess("当前流程在子流程中。", map);
+            return resp;
+        }
+
+        for (Task task : taskList) {
+            TaskEntityImpl taskEntity = (TaskEntityImpl) task;
+            datas.add(generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
+        }
+        resp.doSuccess("查询当前任务成功！", datas);
+        return resp;
     }
 
     /**

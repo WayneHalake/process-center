@@ -82,6 +82,13 @@ public interface ICommonTaskSer {
     List<Task> currentTask(String processId);
 
     /**
+     * 查询流程当前任务
+     * @param processId
+     * @return
+     */
+    ResponseInfo currentTasks(String processId);
+
+    /**
      * 获取当前任务的下一任务信息
      *
      *      * ***注意***

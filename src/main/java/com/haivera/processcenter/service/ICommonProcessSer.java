@@ -33,7 +33,7 @@ public interface ICommonProcessSer {
      * @return
      * @throws Exception
      */
-    List<ProcessInstance> listProcessInstance(String processKey) throws Exception;
+    ResponseInfo listProcessInstance(String processKey) throws Exception;
 
     /**
      * 通过流程发起人查找流程实例
@@ -48,7 +48,7 @@ public interface ICommonProcessSer {
      * @return
      * @throws Exception
      */
-    List<ProcessInstance> listAllProcessInstance() throws Exception;
+    ResponseInfo listAllProcessInstance() throws Exception;
 
     /**
      * 获取流程图
@@ -98,4 +98,11 @@ public interface ICommonProcessSer {
      */
     ProcessInstance getProcessByTaskId(String taskId) throws Exception;
 
+
+    /**
+     * 通过流程id获取子流程
+     * @param processId
+     * @return
+     */
+    ResponseInfo getSubProcessByProcessId(String processId);
 }

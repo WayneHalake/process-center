@@ -60,14 +60,7 @@ public class CommonTaskCtr {
                 resp.doFinish("流程已结束！");
                 return resp;
             }
-            List<Object> datas = new ArrayList<>();
-            List<Task> taskList = commonTaskSer.currentTask(processId);
-
-            for (Task task : taskList) {
-                TaskEntityImpl taskEntity = (TaskEntityImpl) task;
-                datas.add(generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
-            }
-            resp.doSuccess("查询当前任务节点成功！", datas);
+            resp = commonTaskSer.currentTasks(processId);
         } catch (Exception e) {
             e.printStackTrace();
             resp.doFailed("查询当前任务节点失败！", e);

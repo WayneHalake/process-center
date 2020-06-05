@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -119,14 +120,8 @@ public class CommonProcessCtr {
     @GetMapping("/listProcess")
     public ResponseInfo listProcess(String processKey){
         ResponseInfo responseInfo = new ResponseInfo();
-        List<Object> datas = new ArrayList<>();
         try{
-            List<ProcessInstance> processInstances = commonProcessSer.listProcessInstance(processKey);
-            for(ProcessInstance processInstance: processInstances){
-                ExecutionEntityImpl executionEntity = (ExecutionEntityImpl)processInstance;
-                datas.add(executionEntity.getPersistentState());
-            }
-            responseInfo.doSuccess("流程实例列表查询成功！", datas);
+            responseInfo = commonProcessSer.listProcessInstance(processKey);
         }catch (Exception e){
             e.printStackTrace();
             responseInfo.doFailed("流程实例列表查询失败！", e);
@@ -143,13 +138,7 @@ public class CommonProcessCtr {
     public ResponseInfo listAllProcessInstance(){
         ResponseInfo resp = new ResponseInfo();
         try{
-            List<Object> datas = new ArrayList<>();
-            List<ProcessInstance> result = commonProcessSer.listAllProcessInstance();
-            for(ProcessInstance processInstance: result){
-                ExecutionEntityImpl executionEntity = (ExecutionEntityImpl) processInstance;
-                datas.add(executionEntity.getPersistentState());
-            }
-            resp.doSuccess("获取所有流程实例成功！", datas);
+            resp = commonProcessSer.listAllProcessInstance();
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取所有流程实例成功！", e);
@@ -190,6 +179,7 @@ public class CommonProcessCtr {
 
     /**
      * 通过流程id获取流程实例
+     * 包括子流程
      * @param processId
      * @return
      */
@@ -200,8 +190,12 @@ public class CommonProcessCtr {
         ResponseInfo resp = new ResponseInfo();
         try{
             ProcessInstance result = commonProcessSer.getProcessByProcessId(processId);
+            ResponseInfo subInfo = commonProcessSer.getSubProcessByProcessId(processId);
             ExecutionEntityImpl executionEntity = (ExecutionEntityImpl) result;
-            resp.doSuccess("获取流程实例成功！", executionEntity.getPersistentState());
+            HashMap map = new HashMap();
+            map.put("processInfo", executionEntity.getPersistentState());
+            map.put("subProcessInfo", subInfo.getData());
+            resp.doSuccess("获取流程实例成功！", map);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程实例失败！", e);

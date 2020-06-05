@@ -1,5 +1,6 @@
 package com.haivera.processcenter.service.impl;
 
+import com.haivera.processcenter.common.GeneralCommonMap;
 import com.haivera.processcenter.common.IdCombine;
 import com.haivera.processcenter.common.util.ResponseInfo;
 import com.haivera.processcenter.service.CommonHistoricSer;
@@ -10,11 +11,17 @@ import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntityImpl;
+import org.activiti.engine.impl.persistence.entity.TaskEntityImpl;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.activiti.image.ProcessDiagramGenerator;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +61,9 @@ public class CommonProcessImpl implements ICommonProcessSer {
     @Autowired
     CommonHistoricSer commonHistoricSer;
 
+    @Autowired
+    GeneralCommonMap generalCommonMap;
+
     @Override
     public String StartAndCreateProcess(String processKey) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey);
@@ -84,13 +94,32 @@ public class CommonProcessImpl implements ICommonProcessSer {
     }
 
     @Override
-    public List<ProcessInstance> listProcessInstance(String processKey) {
-        return runtimeService.createProcessInstanceQuery().processDefinitionKey(processKey).list();
+    public ResponseInfo listProcessInstance(String processKey) {
+        ResponseInfo resp = new ResponseInfo();
+        ProcessInstanceQuery processInstanceQuery = runtimeService.createProcessInstanceQuery();
+        if(StringUtils.isNotEmpty(processKey)){
+            processInstanceQuery = processInstanceQuery.processDefinitionKey(processKey);
+        }
+        List<ProcessInstance> processInstances = processInstanceQuery.list();
+        List<Object> datas = new ArrayList<>();
+        for(ProcessInstance processInstance: processInstances){
+            ExecutionEntityImpl executionEntity = (ExecutionEntityImpl)processInstance;
+            HashMap<String, Object> map = new HashMap<>();
+            map.putAll((Map<? extends String, ?>) executionEntity.getPersistentState());
+            map.put("processId", executionEntity.getProcessInstanceId());
+
+            //子流程信息
+            ResponseInfo subProcessInfo = getSubProcessByProcessId(executionEntity.getProcessInstanceId());
+            map.put("subProcessInfo", subProcessInfo.getData());
+            datas.add(map);
+        }
+        resp.doSuccess("获取流程列表成功！", datas);
+        return resp;
     }
 
     @Override
-    public List<ProcessInstance> listAllProcessInstance() {
-        return runtimeService.createProcessInstanceQuery().list();
+    public ResponseInfo listAllProcessInstance() {
+        return listProcessInstance(null);
     }
 
     @Override
@@ -138,13 +167,15 @@ public class CommonProcessImpl implements ICommonProcessSer {
 
     @Override
     public void suspendProcess(String processId) {
-        repositoryService.suspendProcessDefinitionById(processId);
+        ProcessInstance processInstance = getProcessByProcessId(processId);
+        repositoryService.suspendProcessDefinitionById(processInstance.getProcessDefinitionId());
         logger.info("挂起流程成功,流程id[{}]", processId);
     }
 
     @Override
     public void activateProcess(String processId) {
-        repositoryService.activateProcessDefinitionById(processId);
+        ProcessInstance processInstance = getProcessByProcessId(processId);
+        repositoryService.activateProcessDefinitionById(processInstance.getProcessDefinitionId());
         logger.info("激活流程成功,流程id[{}]", processId);
     }
 
@@ -171,4 +202,26 @@ public class CommonProcessImpl implements ICommonProcessSer {
         return getProcessByProcessId(task.getProcessInstanceId());
     }
 
+    @Override
+    public ResponseInfo getSubProcessByProcessId(String processId) {
+        ResponseInfo resp = new ResponseInfo();
+        List<Object> datas = new ArrayList<>();
+
+        List<Execution> executionList = runtimeService.createExecutionQuery().rootProcessInstanceId(processId).onlySubProcessExecutions().list();
+        for (Execution execution: executionList ){
+            ExecutionEntityImpl entity = (ExecutionEntityImpl)execution;
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("processId", execution.getProcessInstanceId());
+            map.put("processInfo", entity.getPersistentState());
+            List<Task> taskList = commonTaskImpl.currentTask(execution.getProcessInstanceId());
+            if(taskList!=null && taskList.size()>0){
+                String taskId = taskList.get(0).getId();
+                TaskEntityImpl taskEntity = (TaskEntityImpl) taskList.get(0);
+                map.put("taskInfo", generalCommonMap.taskInfoMap(taskId, taskEntity.getPersistentState()));
+            }
+            datas.add(map);
+        }
+        resp.doSuccess("获取子流程信息成功", datas);
+        return resp;
+    }
 }

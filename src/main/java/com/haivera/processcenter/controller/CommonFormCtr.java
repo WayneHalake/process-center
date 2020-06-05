@@ -113,14 +113,8 @@ public class CommonFormCtr {
             HashMap<String, String> propertiesMap = JSONObject.parseObject(properties.toJSONString(), HashMap.class);
             ProcessInstance processInstance = formService.submitStartFormData(processDefinitionId, propertiesMap);
 
-            List<Task> taskList = commonTaskSer.currentTask(processInstance.getId());
-
-            List<Object> datas = new ArrayList<>();
-            for(Task task: taskList){
-                TaskEntityImpl taskEntity = (TaskEntityImpl)task;
-                datas.add(generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
-            }
-            resp.doSuccess("提交表单成功", datas);
+            resp = commonTaskSer.currentTasks(processInstance.getId());
+            resp.setRtnMsg("提交表单成功");
         } catch (Exception e) {
             e.printStackTrace();
             resp.doFailed("提交表单失败", e);
