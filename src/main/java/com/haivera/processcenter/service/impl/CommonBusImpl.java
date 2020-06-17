@@ -63,6 +63,10 @@ public class CommonBusImpl implements ICommonBusSer {
             processId = processInstance.getProcessInstanceId();
         }else{
             HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceBusinessKey(businessKey).singleResult();
+            if(historicProcessInstance == null){
+                resp.doSuccess("获取流程基本信息为空！");
+                return resp;
+            }
             HistoricProcessInstanceEntityImpl entity = (HistoricProcessInstanceEntityImpl) historicProcessInstance;
             processInfo.putAll((Map<? extends String, ?>) entity.getPersistentState());
             processId = historicProcessInstance.getId();
@@ -94,4 +98,12 @@ public class CommonBusImpl implements ICommonBusSer {
         return historicProcessInstance.getId();
     }
 
+    @Override
+    public ResponseInfo updateBusinessKey(String businessKey, String systemId, String processId) {
+        ResponseInfo resp = new ResponseInfo();
+        businessKey = IdCombine.combineId(systemId, businessKey);
+        runtimeService.updateBusinessKey(processId, businessKey);
+        resp.doSuccess("更新businessKey成功");
+        return resp;
+    }
 }

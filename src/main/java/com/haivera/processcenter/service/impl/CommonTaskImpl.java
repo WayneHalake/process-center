@@ -18,6 +18,7 @@ import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -48,6 +49,7 @@ public class CommonTaskImpl implements ICommonTaskSer {
     }
 
     @Override
+    @Transactional
     public ResponseInfo completeTask(String taskId, HashMap<String, Object> variables, HashMap<String, Object> transientVariables, String systemId, String userId, boolean checkAssignee) throws Exception {
         ResponseInfo resp = new ResponseInfo();
         Task task = this.getTaskByTaskId(taskId);
@@ -61,6 +63,12 @@ public class CommonTaskImpl implements ICommonTaskSer {
             return resp;
         }
 
+        //判断流程是否为子流程
+        boolean subProcessFlag = commonProcessSer.isSubProcess(task.getProcessInstanceId());
+        ResponseInfo subResp = new ResponseInfo();
+        if(subProcessFlag){ //获取父流程信息
+            subResp = commonProcessSer.getRootProcessByProcessId(task.getProcessInstanceId());
+        }
         //校验流程处理人
         if (checkAssignee) {
             boolean checkAssignFlag = checkAssignee(taskId, systemId, userId);
@@ -77,6 +85,32 @@ public class CommonTaskImpl implements ICommonTaskSer {
 
         //任务处理之后判断流程是否结束
         if (commonProcessSer.isFinishedProcess(task.getProcessInstanceId())) {
+            if(subProcessFlag){//当前流程为子流程
+                //获取父流程的当前任务节点
+                HashMap<String, Object> tempData = (HashMap<String, Object>) subResp.getData();
+                String rootProcessId = (String) tempData.get("processId");
+
+                //判断父流程是否结束
+                if(commonProcessSer.isFinishedProcess(rootProcessId)){
+                    resp.doFinish("流程已结束！");
+                    return resp;
+                }
+
+                //获取父流程中的当前任务节点（包含后续的子流程中的任务节点）
+                ResponseInfo currentTask = currentTasks(rootProcessId);
+                List<Object> tasks = (List<Object>) currentTask.getData();
+                if(tasks == null || tasks.size() == 0){
+                    resp.doFailed("查询流程的当前任务失败");
+                    return resp;
+                }
+                HashMap<String, String> taskMap = (HashMap<String, String>) tasks.get(0);
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("assignee", taskMap.get("assignee"));
+                map.put("processId", taskMap.get("processId"));
+                map.put("nextTaskId", taskMap.get("taskId"));
+                resp.doSuccess("任务处理成功", map);
+                return resp;
+            }
             resp.doFinish("流程已结束！");
             return resp;
         }
@@ -99,9 +133,17 @@ public class CommonTaskImpl implements ICommonTaskSer {
 
         if(nextTasks == null || nextTasks.size() == 0){ //流程进入子流程的情况
             ResponseInfo subProcessInfo = commonProcessSer.getSubProcessByProcessId(task.getProcessInstanceId());
+
+            List<HashMap<String, Object>> datas = (List<HashMap<String, Object>>) subProcessInfo.getData();
+            HashMap<String, Object> data = datas.get(0);
+            HashMap<String, Object> taskInfoMap = (HashMap<String, Object>) data.get("taskInfo");
+
             HashMap<String, Object> map = new HashMap();
-            map.put("subProcessInfo", subProcessInfo);
-            resp.doSuccess("任务处理成功！当前流程在子流程中。", subProcessInfo);
+            map.put("subProcessInfo", subProcessInfo.getData());
+            map.put("assignee", taskInfoMap.get("assignee"));
+            map.put("processId", data.get("processId"));
+            map.put("nextTaskId", taskInfoMap.get("taskId"));
+            resp.doSuccess("任务处理成功！当前流程在子流程中。", map);
             return resp;
         }
 
@@ -132,7 +174,9 @@ public class CommonTaskImpl implements ICommonTaskSer {
         }
         //设置下一任务处理人
         String assignee = IdCombine.combineId(systemId, nextUserId);
-        setAssigner(nextTaskId, assignee);
+        if(StringUtils.isNotEmpty(assignee)){
+            setAssigner(nextTaskId, assignee);
+        }
         return resp;
     }
 
@@ -180,7 +224,7 @@ public class CommonTaskImpl implements ICommonTaskSer {
 
     @Override
     public List<Task> currentTask(String processId) {
-        List<Task> taskList = taskService.createTaskQuery().processInstanceId(processId).list();
+        List<Task> taskList = taskService.createTaskQuery().processInstanceId(processId).orderByTaskId().desc().list();
         return taskList;
     }
 
@@ -192,15 +236,12 @@ public class CommonTaskImpl implements ICommonTaskSer {
         List<Task> taskList = currentTask(processId);
         if(taskList == null || taskList.size() == 0){
             ResponseInfo subProcessInfo = commonProcessSer.getSubProcessByProcessId(processId);
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("subProcessInfo", subProcessInfo.getData());
-            resp.doSuccess("当前流程在子流程中。", map);
+            resp.doSuccess("当前流程在子流程中。", subProcessInfo.getData());
             return resp;
         }
 
         for (Task task : taskList) {
-            TaskEntityImpl taskEntity = (TaskEntityImpl) task;
-            datas.add(generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
+            datas.add(generalCommonMap.taskInfoMap(task));
         }
         resp.doSuccess("查询当前任务成功！", datas);
         return resp;
@@ -270,29 +311,37 @@ public class CommonTaskImpl implements ICommonTaskSer {
     }
 
     @Override
-    public List<Task> listTask(String processKey, String systemId, String userId) {
-        List<Task> result = new ArrayList<>();
-        TaskQuery taskQuery = taskService.createTaskQuery().processDefinitionKey(processKey).active();
+    public ResponseInfo listTask(String processKey, String systemId, String userId) {
+        ResponseInfo resp = new ResponseInfo();
+        TaskQuery taskQuery = taskService.createTaskQuery().active();
+
+        if(StringUtils.isNotEmpty(processKey)){
+            taskQuery.processDefinitionKey(processKey);
+        }
 
         String assigner = IdCombine.combineId(systemId, userId);
         if (StringUtils.isNotEmpty(assigner)) {
             taskQuery.taskAssignee(assigner);
         }
-        result = taskQuery.orderByTaskCreateTime().desc().list();
-        return result;
+        List<Task> result = taskQuery.orderByTaskCreateTime().desc().list();
+
+        List<Object> datas = new ArrayList<>();
+        for (Task task : result) {
+            ProcessInstance processInstance = commonProcessSer.getProcessByTaskId(task.getId());
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("processId", processInstance.getId());
+            map.put("processName", processInstance.getProcessDefinitionName());
+            map.put("businessKey", processInstance.getBusinessKey());
+            map.putAll(generalCommonMap.taskInfoMap(task));
+            datas.add(map);
+        }
+        resp.doSuccess("获取任务信息成功！", datas);
+        return resp;
     }
 
     @Override
-    public List<Task> listTask(String systemId, String userId) {
-        List<Task> result = new ArrayList<>();
-        TaskQuery taskQuery = taskService.createTaskQuery().active();
-
-        String assigner = IdCombine.combineId(systemId, userId);
-        if (StringUtils.isNotEmpty(assigner)) {
-            taskQuery.taskAssignee(assigner);
-        }
-        result = taskQuery.orderByTaskCreateTime().desc().list();
-        return result;
+    public ResponseInfo listTask(String systemId, String userId) {
+        return listTask(null, systemId, userId);
     }
 
     @Override

@@ -3,23 +3,19 @@ package com.haivera.processcenter.service.impl;
 import com.haivera.processcenter.common.GeneralCommonMap;
 import com.haivera.processcenter.common.IdCombine;
 import com.haivera.processcenter.common.util.ResponseInfo;
-import com.haivera.processcenter.service.CommonHistoricSer;
+import com.haivera.processcenter.service.ICommonHistoricSer;
 import com.haivera.processcenter.service.ICommonProcessSer;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.*;
-import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntityImpl;
 import org.activiti.engine.impl.persistence.entity.TaskEntityImpl;
-import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
-import org.activiti.engine.task.TaskQuery;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -59,7 +55,7 @@ public class CommonProcessImpl implements ICommonProcessSer {
     IdentityService identityService;
 
     @Autowired
-    CommonHistoricSer commonHistoricSer;
+    ICommonHistoricSer ICommonHistoricSer;
 
     @Autowired
     GeneralCommonMap generalCommonMap;
@@ -76,11 +72,15 @@ public class CommonProcessImpl implements ICommonProcessSer {
     public String startProcessInstanceByKey(String processKey, String busCode, String busType, String userId, String systemId) {
         logger.info("开始创建流程，业务编码[{}]，业务类型[{}]", busCode, busType);
         Map<String, Object> variables = new HashMap<>();
-        variables.put("busCode", busCode);
-        variables.put("busType", busType);
-
         String startUserId = IdCombine.combineId(systemId, userId);
         String businessKey = IdCombine.combineId(systemId, busCode);
+
+        variables.put("busCode", busCode);
+        variables.put("busType", busType);
+        variables.put("processName", busType);
+        variables.put("processCode", processKey);
+        variables.put("businessKey", businessKey);
+
         identityService.setAuthenticatedUserId(startUserId); //设置流程发起人
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, businessKey, variables);
         String processInsId = processInstance.getId();
@@ -90,7 +90,7 @@ public class CommonProcessImpl implements ICommonProcessSer {
 
     @Override
     public ResponseInfo listProcessInstanceStartBy(String systemId, String userId) {
-        return commonHistoricSer.listHisProcessInstance(null, systemId, userId, false);
+        return ICommonHistoricSer.listHisProcessInstance(null, systemId, userId, false);
     }
 
     @Override
@@ -215,13 +215,46 @@ public class CommonProcessImpl implements ICommonProcessSer {
             map.put("processInfo", entity.getPersistentState());
             List<Task> taskList = commonTaskImpl.currentTask(execution.getProcessInstanceId());
             if(taskList!=null && taskList.size()>0){
-                String taskId = taskList.get(0).getId();
-                TaskEntityImpl taskEntity = (TaskEntityImpl) taskList.get(0);
-                map.put("taskInfo", generalCommonMap.taskInfoMap(taskId, taskEntity.getPersistentState()));
+                map.put("taskId", taskList.get(0).getId());
+                map.put("taskInfo", generalCommonMap.taskInfoMap(taskList.get(0)));
             }
             datas.add(map);
         }
         resp.doSuccess("获取子流程信息成功", datas);
+        return resp;
+    }
+
+    @Override
+    public boolean isSubProcess(String processId) {
+        List<Execution> executions = runtimeService.createExecutionQuery().processInstanceId(processId).list();
+        for(Execution execution: executions){
+            if(!execution.getProcessInstanceId().equals(execution.getRootProcessInstanceId())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public ResponseInfo getRootProcessByProcessId(String processId) {
+        ResponseInfo resp = new ResponseInfo();
+        List<Execution> executions = runtimeService.createExecutionQuery().processInstanceId(processId).list();
+        if(executions == null){
+            resp.doSuccess("获取父流程为空");
+            return resp;
+        }
+        String rootProcessId = executions.get(0).getRootProcessInstanceId();
+        if(StringUtils.isEmpty(rootProcessId)){
+            resp.doSuccess("获取父流程为空");
+            return resp;
+        }
+
+        ProcessInstance processInstance = getProcessByProcessId(rootProcessId);
+        if(processInstance == null){
+            resp.doSuccess("获取父流程为空");
+            return resp;
+        }
+        resp.doSuccess("获取父流程成功！", generalCommonMap.processInfoMap(processInstance));
         return resp;
     }
 }

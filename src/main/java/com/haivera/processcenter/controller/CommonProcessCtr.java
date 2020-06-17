@@ -72,6 +72,7 @@ public class CommonProcessCtr {
             HashMap<String, Object> map = new HashMap();
             map.put("processId", processId);
             map.put("currentTaskId", taskIds.get(0));
+            map.put("currentTaskIds", taskIds);
             resp.doSuccess("创建流程成功", map);
         }catch (Exception e){
             e.printStackTrace();
@@ -189,6 +190,11 @@ public class CommonProcessCtr {
     public ResponseInfo getProcessByProcessId(String processId){
         ResponseInfo resp = new ResponseInfo();
         try{
+            if(commonProcessSer.isFinishedProcess(processId)){
+                resp.doSuccess("流程已结束！");
+                return resp;
+            }
+
             ProcessInstance result = commonProcessSer.getProcessByProcessId(processId);
             ResponseInfo subInfo = commonProcessSer.getSubProcessByProcessId(processId);
             ExecutionEntityImpl executionEntity = (ExecutionEntityImpl) result;

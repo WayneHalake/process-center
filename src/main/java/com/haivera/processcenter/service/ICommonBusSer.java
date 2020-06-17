@@ -23,4 +23,14 @@ public interface ICommonBusSer {
      */
     String getProcessId(String businessKey, String systemId);
 
+    /**
+     * 修改流程中的businessKey
+     * @param businessKey
+     * @param systemId
+     * @param processId
+     * @return
+     */
+    ResponseInfo updateBusinessKey(String businessKey, String systemId, String processId);
+
+
 }

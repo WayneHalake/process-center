@@ -2,7 +2,7 @@ package com.haivera.processcenter.service.impl;
 
 import com.haivera.processcenter.common.IdCombine;
 import com.haivera.processcenter.common.util.ResponseInfo;
-import com.haivera.processcenter.service.CommonHistoricSer;
+import com.haivera.processcenter.service.ICommonHistoricSer;
 import com.haivera.processcenter.service.ICommonProcessSer;
 import com.haivera.processcenter.service.ICommonTaskSer;
 import com.haivera.processcenter.vo.HistoricActivityInstanceEntity;
@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class CommonHistoricImpl extends HistoryServiceImpl implements CommonHistoricSer {
+public class CommonHistoricImpl extends HistoryServiceImpl implements ICommonHistoricSer {
 
     @Autowired
     private HistoryService historyService;

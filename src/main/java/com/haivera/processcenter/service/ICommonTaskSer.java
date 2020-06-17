@@ -108,7 +108,7 @@ public interface ICommonTaskSer {
      * @param userId
      * @return
      */
-    List<Task> listTask(String processKey, String systemId, String userId) throws Exception;
+    ResponseInfo listTask(String processKey, String systemId, String userId) throws Exception;
 
     /**
      * 查询用户的所有任务列表
@@ -117,7 +117,7 @@ public interface ICommonTaskSer {
      * @return
      * @throws Exception
      */
-    List<Task> listTask(String systemId, String userId) throws Exception;
+    ResponseInfo listTask(String systemId, String userId) throws Exception;
 
     /**
      * 按流程id查询任务列表

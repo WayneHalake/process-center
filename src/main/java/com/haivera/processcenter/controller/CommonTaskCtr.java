@@ -125,8 +125,7 @@ public class CommonTaskCtr {
         ResponseInfo resp = new ResponseInfo();
         try {
             Task task = commonTaskSer.getTaskByTaskId(taskId);
-            TaskEntityImpl taskEntity = (TaskEntityImpl) task;
-            resp.doSuccess("获取任务成功", generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
+            resp.doSuccess("获取任务成功", generalCommonMap.taskInfoMap(task));
         } catch (Exception e) {
             e.printStackTrace();
             resp.doFailed("获取任务失败", e);
@@ -170,8 +169,7 @@ public class CommonTaskCtr {
             List<Object> datas = new ArrayList<>();
             List<Task> taskList = commonTaskSer.listRunTask(processId);
             for (Task task : taskList) {
-                TaskEntityImpl taskEntity = (TaskEntityImpl) task;
-                datas.add(generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
+                datas.add(generalCommonMap.taskInfoMap(task));
             }
             resp.doSuccess("获取流程当前任务列表成功！", datas);
         } catch (Exception e) {
@@ -199,13 +197,7 @@ public class CommonTaskCtr {
     public ResponseInfo listTask(String processKey, String systemId, String userId) {
         ResponseInfo resp = new ResponseInfo();
         try {
-            List<Task> taskList = commonTaskSer.listTask(processKey, systemId, userId);
-            List<Object> datas = new ArrayList<>();
-            for (Task task : taskList) {
-                TaskEntityImpl taskEntity = (TaskEntityImpl) task;
-                datas.add(generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
-            }
-            resp.doSuccess("获取当前用户的任务成功！", datas);
+            resp = commonTaskSer.listTask(processKey, systemId, userId);
         } catch (Exception e) {
             e.printStackTrace();
             resp.doFailed("获取当前用户的任务失败!", e);
@@ -229,32 +221,7 @@ public class CommonTaskCtr {
     public ResponseInfo listTask(String systemId, String userId) {
         ResponseInfo resp = new ResponseInfo();
         try {
-            List<Task> taskList = commonTaskSer.listTask(systemId, userId);
-            List<Object> datas = new ArrayList<>();
-            HashMap<String, Object> result = new HashMap<>();
-            HashMap<String, Integer> taskCollect = new HashMap<>();
-            for (Task task : taskList) {
-                TaskEntityImpl taskEntity = (TaskEntityImpl) task;
-                ProcessInstance processInstance = commonProcessSer.getProcessByTaskId(task.getId());
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("processId", processInstance.getId());
-                map.put("processName", processInstance.getProcessDefinitionName());
-                map.put("businessKey", processInstance.getBusinessKey());
-                map.putAll(generalCommonMap.taskInfoMap(task.getId(), taskEntity.getPersistentState()));
-
-                datas.add(map);
-
-                //任务汇总，待办任务按照任务名称统计
-                if(taskCollect.containsKey(task.getName())){
-                    taskCollect.put(task.getName(), taskCollect.get(task.getName()) + 1);
-                }else{
-                    taskCollect.put(task.getName(), 1);
-                }
-
-            }
-            result.put("datas", datas);
-            result.put("taskCollect", taskCollect);
-            resp.doSuccess("获取当前用户的任务成功！", result);
+            resp = commonTaskSer.listTask(systemId, userId);
         } catch (Exception e) {
             e.printStackTrace();
             resp.doFailed("获取当前用户的任务失败!", e);

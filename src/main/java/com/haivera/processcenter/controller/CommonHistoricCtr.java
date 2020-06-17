@@ -1,7 +1,7 @@
 package com.haivera.processcenter.controller;
 
 import com.haivera.processcenter.common.util.ResponseInfo;
-import com.haivera.processcenter.service.CommonHistoricSer;
+import com.haivera.processcenter.service.ICommonHistoricSer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommonHistoricCtr {
 
     @Autowired
-    private CommonHistoricSer commonHistoricSer;
+    private ICommonHistoricSer ICommonHistoricSer;
 
     /**
      * 获取流程实例记录
@@ -33,7 +33,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisProcessInstanceByKey(String processKey, boolean finishFlag){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisProcessInstance(processKey, finishFlag);
+            resp = ICommonHistoricSer.listHisProcessInstance(processKey, finishFlag);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程实例历史记录失败", e);
@@ -51,7 +51,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisProcessInstanceByUser(String systemId, String userId, boolean finishFlag){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisProcessInstance(systemId, userId, finishFlag);
+            resp = ICommonHistoricSer.listHisProcessInstance(systemId, userId, finishFlag);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程实例历史记录失败", e);
@@ -71,7 +71,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisProcessInstanceByKeyAndUser(String processKey, String systemId, String userId, boolean finishFlag){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisProcessInstance(processKey, systemId, userId, finishFlag);
+            resp = ICommonHistoricSer.listHisProcessInstance(processKey, systemId, userId, finishFlag);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程实例历史记录失败", e);
@@ -90,7 +90,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisProcessByKey(String processKey){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisProcess(processKey);
+            resp = ICommonHistoricSer.listHisProcess(processKey);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程活动历史记录失败", e);
@@ -108,7 +108,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisProcessByUser(String systemId, String userId){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisProcess(systemId, userId);
+            resp = ICommonHistoricSer.listHisProcess(systemId, userId);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程活动历史记录失败", e);
@@ -126,7 +126,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisProcess(String processKey, String systemId, String userId){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisProcess(processKey, systemId, userId);
+            resp = ICommonHistoricSer.listHisProcess(processKey, systemId, userId);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程活动历史记录失败", e);
@@ -145,7 +145,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisTask(String processId){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisTask(processId);
+            resp = ICommonHistoricSer.listHisTask(processId);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程的任务历史记录失败", e);
@@ -162,7 +162,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisTask(String processId, String taskName){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisTask(processId, taskName);
+            resp = ICommonHistoricSer.listHisTask(processId, taskName);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程的任务历史记录失败", e);
@@ -180,7 +180,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisTask(String processId, String systemId, String userId){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisTask(processId, systemId, userId);
+            resp = ICommonHistoricSer.listHisTask(processId, systemId, userId);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程的任务历史记录失败", e);
@@ -197,7 +197,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisTaskByUser(String systemId, String userId){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisTaskByAssignee(systemId, userId);
+            resp = ICommonHistoricSer.listHisTaskByAssignee(systemId, userId);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程的任务历史记录失败", e);
@@ -217,7 +217,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisTask(String processId, String systemId, String userId, String taskName){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisTask(processId, systemId, userId, taskName);
+            resp = ICommonHistoricSer.listHisTask(processId, systemId, userId, taskName);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程的任务历史记录失败", e);
@@ -236,7 +236,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisVariable(String processId){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisVariable(processId);
+            resp = ICommonHistoricSer.listHisVariable(processId);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程变量历史记录失败", e);
@@ -259,7 +259,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisVariable(String processId, String taskId){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisVariable(processId, taskId);
+            resp = ICommonHistoricSer.listHisVariable(processId, taskId);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程变量历史记录失败", e);
@@ -278,7 +278,7 @@ public class CommonHistoricCtr {
     public ResponseInfo listHisVariableByTaskId(String taskId){
         ResponseInfo resp = new ResponseInfo();
         try{
-            resp = commonHistoricSer.listHisVariableByTaskId(taskId);
+            resp = ICommonHistoricSer.listHisVariableByTaskId(taskId);
         }catch (Exception e){
             e.printStackTrace();
             resp.doFailed("获取流程变量历史记录失败", e);

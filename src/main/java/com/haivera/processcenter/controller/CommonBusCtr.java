@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +38,18 @@ public class CommonBusCtr {
     @GetMapping("/getProcessId")
     public String getProcessId(String businessKey, String systemId){
         return commonBusSer.getProcessId(businessKey, systemId);
+    }
+
+
+    @ApiOperation(value = "更新流程的businessKey", notes = "更新流程的businessKey")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "businessKey", value = "业务编号", paramType = "query", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "systemId", value = "系统id", paramType = "query", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "processId", value = "流程id", paramType = "query", required = true, dataType = "string"),
+    })
+    @PostMapping("/updateBusinessKey")
+    public ResponseInfo updateBusinessKey(String businessKey, String systemId, String processId){
+        return commonBusSer.updateBusinessKey(businessKey, systemId, processId);
     }
 
 }

@@ -88,7 +88,7 @@ public interface ICommonProcessSer {
      * @return
      * @throws Exception
      */
-    ProcessInstance getProcessByProcessId(String processId) throws Exception;
+    ProcessInstance getProcessByProcessId(String processId);
 
     /**
      * 通过任务id获取流程
@@ -96,7 +96,7 @@ public interface ICommonProcessSer {
      * @return
      * @throws Exception
      */
-    ProcessInstance getProcessByTaskId(String taskId) throws Exception;
+    ProcessInstance getProcessByTaskId(String taskId);
 
 
     /**
@@ -105,4 +105,19 @@ public interface ICommonProcessSer {
      * @return
      */
     ResponseInfo getSubProcessByProcessId(String processId);
+
+    /**
+     * 判断是否为子流程
+     * @param processId
+     * @return true 子流程、 false 非子流程
+     */
+    boolean isSubProcess(String processId);
+
+    /**
+     * 获取流程的父流程
+     * @param processId
+     * @return
+     */
+    ResponseInfo getRootProcessByProcessId(String processId);
+
 }
