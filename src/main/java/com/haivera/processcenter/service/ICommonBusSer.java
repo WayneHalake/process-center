@@ -10,6 +10,9 @@ public interface ICommonBusSer {
     /**
      * 获取基本信息
      * 流程实例信息、当前任务所在任务节点等
+     * ***
+     * *** 如存在多个流程的businessKey相同时，仅仅会返回流程id最大的流程信息
+     * ***
      * @param businessKey
      * @return
      */
@@ -17,6 +20,9 @@ public interface ICommonBusSer {
 
     /**
      * 通过businessKey获取流程实例id
+     *  * ***
+     *  * *** 如存在多个流程的businessKey相同时，仅仅会返回流程id最大的流程信息
+     *  * ***
      * @param businessKey
      * @param systemId
      * @return

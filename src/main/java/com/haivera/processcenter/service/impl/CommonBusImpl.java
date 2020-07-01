@@ -54,19 +54,21 @@ public class CommonBusImpl implements ICommonBusSer {
         HashMap<String, Object> map = new HashMap<>();
         map.put("businessKey", businessKey);
         businessKey = IdCombine.combineId(systemId, businessKey);
-        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(businessKey).singleResult();
+        List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(businessKey).orderByProcessInstanceId().desc().list();
         HashMap<String, Object> processInfo = new HashMap<>();
         String processId = "";
-        if(processInstance != null){
+        if(processInstances != null){
+            ProcessInstance processInstance = processInstances.get(0);
             ExecutionEntityImpl entity = (ExecutionEntityImpl) processInstance;
             processInfo.putAll((Map<? extends String, ?>) entity.getPersistentState());
             processId = processInstance.getProcessInstanceId();
         }else{
-            HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceBusinessKey(businessKey).singleResult();
-            if(historicProcessInstance == null){
+            List<HistoricProcessInstance> historicProcessInstances = historyService.createHistoricProcessInstanceQuery().processInstanceBusinessKey(businessKey).orderByProcessInstanceId().desc().list();
+            if(historicProcessInstances == null){
                 resp.doSuccess("获取流程基本信息为空！");
                 return resp;
             }
+            HistoricProcessInstance historicProcessInstance = historicProcessInstances.get(0);
             HistoricProcessInstanceEntityImpl entity = (HistoricProcessInstanceEntityImpl) historicProcessInstance;
             processInfo.putAll((Map<? extends String, ?>) entity.getPersistentState());
             processId = historicProcessInstance.getId();
@@ -90,11 +92,13 @@ public class CommonBusImpl implements ICommonBusSer {
     @Override
     public String getProcessId(String businessKey, String systemId) {
         businessKey = IdCombine.combineId(systemId, businessKey);
-        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(businessKey).singleResult();
-        if(processInstance != null){
+        List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(businessKey).orderByProcessInstanceId().desc().list();
+        if(processInstances != null){
+            ProcessInstance processInstance = processInstances.get(0);
             return processInstance.getProcessInstanceId();
         }
-        HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceBusinessKey(businessKey).singleResult();
+        List<HistoricProcessInstance> historicProcessInstances = historyService.createHistoricProcessInstanceQuery().processInstanceBusinessKey(businessKey).orderByProcessInstanceId().desc().list();
+        HistoricProcessInstance historicProcessInstance = historicProcessInstances.get(0);
         return historicProcessInstance.getId();
     }
 

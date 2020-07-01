@@ -46,9 +46,9 @@ public class SubProcessAInit implements ExecutionListener {
         }
 
         if(StringUtils.isNotEmpty(businessKeyValue)){
-            if(StringUtils.isNotEmpty(processCodeValue)){
+/*            if(StringUtils.isNotEmpty(processCodeValue)){
                 businessKeyValue = processCodeValue.concat("_").concat(businessKeyValue);
-            }
+            }*/
             runtimeService.updateBusinessKey(processId, businessKeyValue);
         }
 

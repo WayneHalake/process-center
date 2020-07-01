@@ -20,7 +20,8 @@ public class CommonBusCtr {
     @Autowired
     private ICommonBusSer commonBusSer;
 
-    @ApiOperation(value = "通过businessKey获取流程基本信息", notes = "通过businessKey获取流程基本信息")
+
+    @ApiOperation(value = "通过businessKey获取流程基本信息", notes = "通过businessKey获取流程基本信息，如存在多个流程的businessKey相同时，仅仅会返回流程id最大的流程信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "businessKey", value = "业务编号", paramType = "query", required = true, dataType = "string"),
             @ApiImplicitParam(name = "systemId", value = "系统id", paramType = "query", required = true, dataType = "string"),
@@ -30,7 +31,7 @@ public class CommonBusCtr {
         return commonBusSer.getBaseInfo(businessKey, systemId);
     }
 
-    @ApiOperation(value = "通过businessKey获取流程id", notes = "通过businessKey获取流程id")
+    @ApiOperation(value = "通过businessKey获取流程id", notes = "通过businessKey获取流程id，如存在多个流程的businessKey相同时，仅仅会返回流程id最大的流程信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "businessKey", value = "业务编号", paramType = "query", required = true, dataType = "string"),
             @ApiImplicitParam(name = "systemId", value = "系统id", paramType = "query", required = true, dataType = "string"),
