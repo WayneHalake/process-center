@@ -218,6 +218,7 @@ public class CommonProcessImpl implements ICommonProcessSer {
                 map.put("taskId", taskList.get(0).getId());
                 map.put("taskInfo", generalCommonMap.taskInfoMap(taskList.get(0)));
             }
+            map.put("isSubProcess", true);
             datas.add(map);
         }
         resp.doSuccess("获取子流程信息成功", datas);

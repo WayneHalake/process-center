@@ -6,8 +6,14 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
 import org.activiti.engine.delegate.Expression;
+import org.activiti.engine.runtime.Execution;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 初始化A模型子流程
@@ -50,6 +56,15 @@ public class SubProcessAInit implements ExecutionListener {
                 businessKeyValue = processCodeValue.concat("_").concat(businessKeyValue);
             }*/
             runtimeService.updateBusinessKey(processId, businessKeyValue);
+        }
+
+        //将父流程中的流程变量信息复制到子流程中
+        //获取子流程的父流程信息
+        if(execution.getParent() != null){
+            String rootProcessId = execution.getRootProcessInstanceId();
+            //获取并设置父流程中的变量信息
+            Map<String, Object> variables = runtimeService.getVariables(rootProcessId);
+            runtimeService.setVariables(processId, variables);
         }
 
     }

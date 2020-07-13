@@ -98,7 +98,7 @@ public class CommonStatisCtr {
         try{
             responseInfo = commonStatisSer.countUpActProcess(systemId, userId);
         }catch (Exception e){
-            responseInfo.doSuccess("统计我发起的正在运行的流程失败！", e);
+            responseInfo.doFailed("统计我发起的正在运行的流程失败！", e);
         }
         return responseInfo;
     }

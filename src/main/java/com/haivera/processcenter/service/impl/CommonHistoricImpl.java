@@ -36,6 +36,14 @@ public class CommonHistoricImpl extends HistoryServiceImpl implements ICommonHis
     private ICommonProcessSer commonProcessSer;
 
     @Override
+    public HistoricProcessInstance getHisProcessInstance(String processId) {
+        HistoricProcessInstanceQuery processInstanceQuery = historyService.createHistoricProcessInstanceQuery();
+        processInstanceQuery.processInstanceId(processId);
+        HistoricProcessInstance processInstances = processInstanceQuery.singleResult();
+        return processInstances;
+    }
+
+    @Override
     public ResponseInfo listHisProcessInstance(String processKey, boolean finishFlag) {
         return listHisProcessInstance(processKey, null, finishFlag);
     }
@@ -50,32 +58,35 @@ public class CommonHistoricImpl extends HistoryServiceImpl implements ICommonHis
         ResponseInfo resp = new ResponseInfo();
         HistoricProcessInstanceQuery processInstanceQuery = historyService.createHistoricProcessInstanceQuery();
 
-        if (finishFlag) {
-            processInstanceQuery.finished();
-        } else {
-            processInstanceQuery.unfinished();
+        String assignee = IdCombine.combineId(systemId, userId);
+        if (StringUtils.isNotEmpty(assignee)) {
+            processInstanceQuery.startedBy(assignee);
         }
 
         if (StringUtils.isNotEmpty(processKey)) {
             processInstanceQuery.processDefinitionKey(processKey);
         }
 
-        String assignee = IdCombine.combineId(systemId, userId);
-        if (StringUtils.isNotEmpty(assignee)) {
-            processInstanceQuery.startedBy(assignee);
+        if (finishFlag) {
+            processInstanceQuery.finished();
+            processInstanceQuery.orderByProcessInstanceEndTime().desc();
+        } else {
+            processInstanceQuery.unfinished();
+            processInstanceQuery.orderByProcessInstanceStartTime().desc();
         }
-        List<HistoricProcessInstance> processInstances = processInstanceQuery.orderByProcessInstanceEndTime().desc().list();
+        List<HistoricProcessInstance> processInstances = processInstanceQuery.listPage(0, 6);
         List<Object> datas = new ArrayList<>();
         for (HistoricProcessInstance processInstance : processInstances) {
             HistoricProcessInstanceEntityImpl entity = (HistoricProcessInstanceEntityImpl) processInstance;
             HashMap<String, Object> tempResult = (HashMap<String, Object>) entity.getPersistentState();
+            tempResult.put("startTime", entity.getStartTime());
             tempResult.put("processInstanceId", entity.getProcessInstanceId());
             boolean isFinish = commonProcessSer.isFinishedProcess(entity.getProcessInstanceId());
             tempResult.put("isFinish", isFinish);
             if (!isFinish) {
                 List<Task> taskList = commonTaskSer.currentTask(entity.getProcessInstanceId());
                 //正常情况下只有数据一条(会签情况除外)
-                if(taskList != null){
+                if(taskList != null && taskList.size() > 0){
                     Task task = taskList.get(0);
                     tempResult.put("taskId", task.getId());
                     tempResult.put("taskName", task.getName());
@@ -201,10 +212,10 @@ public class CommonHistoricImpl extends HistoryServiceImpl implements ICommonHis
         }
 
         List<HistoricVariableInstance> variableInstances = variableInstanceQuery.orderByProcessInstanceId().desc().list();
-        List<Object> datas = new ArrayList<>();
+        HashMap<String, Object> datas = new HashMap<>();
         for (HistoricVariableInstance variableInstance : variableInstances) {
             HistoricVariableInstanceEntityImpl entity = (HistoricVariableInstanceEntityImpl) variableInstance;
-            datas.add(HistoricVariableInstanceEntity.getPersistentState(entity));
+            datas.put(entity.getName(), entity.getTextValue());
         }
         resp.doSuccess("查询变量历史记录成功", datas);
         return resp;
@@ -212,6 +223,6 @@ public class CommonHistoricImpl extends HistoryServiceImpl implements ICommonHis
 
     @Override
     public ResponseInfo listHisVariableByTaskId(String taskId) {
-        return listHisTask(null, taskId);
+        return listHisVariable(null, taskId);
     }
 }

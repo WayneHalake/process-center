@@ -2,8 +2,16 @@ package com.haivera.processcenter.service;
 
 
 import com.haivera.processcenter.common.util.ResponseInfo;
+import org.activiti.engine.history.HistoricProcessInstance;
 
 public interface ICommonHistoricSer {
+
+    /**
+     * 根据流程id获取流程实例
+     * @param processId
+     * @return
+     */
+    HistoricProcessInstance getHisProcessInstance(String processId);
 
     /**
      * 流程实例历史记录
