@@ -148,15 +148,18 @@ public class CommonProcessCtr {
     }
 
     /**
-     * 挂起流程
-     * @param processId
+     * 挂起流程定义
+     * 挂起流程定义与挂起流程实例有区别
+     * 区别：当流程实例被挂起时，不能使用该流程定义创建流程实例，不能操作与该流程实例相关的所有流程实例
+     *
+     * @param processDefinitionId
      */
-    @ApiOperation(value = "挂起流程", notes = "通过流程实例processId挂起流程")
-    @ApiImplicitParam(name = "processId", value = "流程实例processId", paramType="query", required = true, dataType = "string")
+    @ApiOperation(value = "挂起流程定义", notes = "通过流程定义processId挂起流程")
+    @ApiImplicitParam(name = "processDefinitionId", value = "流程定义processDefinitionId", paramType="query", required = true, dataType = "string")
     @PostMapping("/suspendProcess")
-    public void suspendProcess(String processId){
+    public void suspendProcess(String processDefinitionId){
         try{
-            commonProcessSer.suspendProcess(processId);
+            commonProcessSer.suspendProcess(processDefinitionId);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -164,15 +167,49 @@ public class CommonProcessCtr {
     }
 
     /**
-     * 启动挂起的流程
+     * 启动挂起的流程定义
+     * @param processDefinitionId
+     */
+    @ApiOperation(value = "启动挂起的流程定义", notes = "通过流程定义processDefinitionId启动挂起的流程定义")
+    @ApiImplicitParam(name = "processDefinitionId", value = "流程定义processDefinitionId", paramType="query", required = true, dataType = "string")
+    @PostMapping("/activateProcess")
+    public void activateProcess(String processDefinitionId){
+        try{
+            commonProcessSer.activateProcess(processDefinitionId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 挂起流程实例
+     * 挂起流程定义与挂起流程实例有区别
+     * 区别：当流程实例被挂起时，不能使用该流程定义创建流程实例，不能操作与该流程实例相关的所有流程实例
+     *
      * @param processId
      */
-    @ApiOperation(value = "启动挂起的流程", notes = "通过流程实例processId启动挂起的流程")
-    @ApiImplicitParam(name = "processId", value = "流程实例processId", paramType="query", required = true, dataType = "string")
-    @PostMapping("/activateProcess")
-    public void activateProcess(String processId){
+    @ApiOperation(value = "挂起流程实例", notes = "通过流程processId挂起流程")
+    @ApiImplicitParam(name = "processId", value = "流程processId", paramType="query", required = true, dataType = "string")
+    @PostMapping("/suspendProcessInstance")
+    public void suspendProcessInstance(String processId){
         try{
-            commonProcessSer.activateProcess(processId);
+            commonProcessSer.suspendProcessInstance(processId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 启动挂起的流程定义
+     * @param processId
+     */
+    @ApiOperation(value = "启动挂起的流程实例", notes = "通过流程定义processId启动挂起的流程定义")
+    @ApiImplicitParam(name = "processId", value = "流程定义processId", paramType="query", required = true, dataType = "string")
+    @PostMapping("/activateProcessInstance")
+    public void activateProcessInstance(String processId){
+        try{
+            commonProcessSer.activateProcessInstance(processId);
         }catch (Exception e){
             e.printStackTrace();
         }

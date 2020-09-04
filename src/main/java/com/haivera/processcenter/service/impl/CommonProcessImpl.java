@@ -166,17 +166,27 @@ public class CommonProcessImpl implements ICommonProcessSer {
     }
 
     @Override
-    public void suspendProcess(String processId) {
-        ProcessInstance processInstance = getProcessByProcessId(processId);
-        repositoryService.suspendProcessDefinitionById(processInstance.getProcessDefinitionId());
-        logger.info("挂起流程成功,流程id[{}]", processId);
+    public void suspendProcess(String processDefinitionId) {
+        repositoryService.suspendProcessDefinitionById(processDefinitionId);
+        logger.info("挂起流程定义成功,流程定义id[{}]", processDefinitionId);
     }
 
     @Override
-    public void activateProcess(String processId) {
-        ProcessInstance processInstance = getProcessByProcessId(processId);
-        repositoryService.activateProcessDefinitionById(processInstance.getProcessDefinitionId());
-        logger.info("激活流程成功,流程id[{}]", processId);
+    public void activateProcess(String processDefinitionId) {
+        repositoryService.activateProcessDefinitionById(processDefinitionId);
+        logger.info("激活流程定义成功,流程定义id[{}]", processDefinitionId);
+    }
+
+    @Override
+    public void suspendProcessInstance(String processId) throws Exception {
+        runtimeService.suspendProcessInstanceById(processId);
+        logger.info("挂起流程成功,流程实例id[{}]", processId);
+    }
+
+    @Override
+    public void activateProcessInstance(String processId) throws Exception {
+        runtimeService.activateProcessInstanceById(processId);
+        logger.info("激活流程成功,流程实例id[{}]", processId);
     }
 
     @Override

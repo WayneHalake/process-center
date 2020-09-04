@@ -60,19 +60,32 @@ public interface ICommonProcessSer {
     void getWorkFlowImage(HttpServletResponse response, String processId, boolean lightFlag) throws Exception;
 
     /**
-     * 挂起流程
-     * @param processId
+     * 挂起流程定义
+     * @param processDefinitionId
      * @throws Exception
      */
-    void suspendProcess(String processId) throws Exception;
+    void suspendProcess(String processDefinitionId) throws Exception;
 
     /**
-     * 将挂起流程激活
+     * 将挂起流程定义激活
+     * @param processDefinitionId
+     * @throws Exception
+     */
+    void activateProcess(String processDefinitionId) throws Exception;
+
+    /**
+     * 挂起流程实例
      * @param processId
      * @throws Exception
      */
-    void activateProcess(String processId) throws Exception;
+    void suspendProcessInstance(String processId)throws Exception;
 
+    /**
+     * 将挂起的流程实例激活
+     * @param processId
+     * @throws Exception
+     */
+    void activateProcessInstance(String processId)throws Exception;
 
     /**
      * 判断流程是否结束
